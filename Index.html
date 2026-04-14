@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Sprint Lab</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg-card: #1a1a1a;
+  --bg-card2: #222222;
+  --bg-input: #252525;
+  --text: #e8e6e0;
+  --text-muted: #888880;
+  --text-dim: #555550;
+  --accent: #f59e0b;
+  --accent-dim: #92400e;
+  --accent-green: #22c55e;
+  --accent-green-dim: #14532d;
+  --accent-red: #ef4444;
+  --accent-red-dim: #7f1d1d;
+  --accent-yellow: #eab308;
+  --accent-yellow-dim: #713f12;
+  --accent-blue: #38bdf8;
+  --accent-blue-dim: #0c4a6e;
+  --border: #2e2e2e;
+  --border-light: #3a3a3a;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --tap-min: 48px;
+  --max-w: 480px;
+  --nav-h: 56px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+}
+
+#app {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding-bottom: calc(var(--nav-h) + 16px);
+  min-height: 100vh;
+}
+
+/* ── NAV ── */
+#main-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--max-w);
+  height: var(--nav-h);
+  background: #141414;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: stretch;
+  z-index: 100;
+}
+
+#main-nav button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: color 0.15s;
+  padding: 0;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+#main-nav button .nav-icon { font-size: 18px; line-height: 1; }
+#main-nav button.active { color: var(--accent); }
+
+/* ── TABS ── */
+.tab-panel { display: none; padding: 16px 16px 0; }
+.tab-panel.active { display: block; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0 12px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.page-title {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.page-title span { color: var(--accent); }
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+}
+.card-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+.card-title.accent { color: var(--accent); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: block;
+  width: 100%;
+  min-height: var(--tap-min);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.01em;
+}
+.btn:active { transform: scale(0.98); opacity: 0.85; }
+.btn-primary { background: var(--accent); color: #000; }
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-light);
+  color: var(--text);
+}
+.btn-green { background: var(--accent-green); color: #000; }
+.btn-red { background: var(--accent-red); color: #fff; }
+.btn-danger {
+  background: var(--accent-red-dim);
+  color: var(--accent-red);
+  border: 1px solid var(--accent-red);
+}
+.btn-sm {
+  min-height: 36px;
+  font-size: 13px;
+  padding: 0 12px;
+  width: auto;
+  display: inline-block;
+}
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+/* ── INPUTS ── */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  background: var(--bg-input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-size: 16px;
+  font-family: inherit;
+  outline: none;
+  -webkit-appearance: none;
+}
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus { border-color: var(--accent); }
+textarea { resize: vertical; min-height: 72px; }
+select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23888880' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.field { margin-bottom: 14px; }
+
+/* ── SLIDERS ── */
+.slider-group { margin-bottom: 16px; }
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.slider-label { font-size: 14px; font-weight: 500; color: var(--text); }
+.slider-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 40px;
+  text-align: right;
+}
+input[type="range"] {
+  width: 100%;
+  height: 40px;
+  accent-color: var(--accent);
+  cursor: pointer;
+  background: transparent;
+}
+
+/* ── TOGGLE ── */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+.toggle-label { font-size: 14px; font-weight: 500; color: var(--text); }
+.toggle-switch {
+  display: flex;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.toggle-switch button {
+  min-height: 36px;
+  padding: 0 16px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.toggle-switch button.active {
+  background: var(--accent);
+  color: #000;
+}
+
+/* ── DAY TYPE BUTTONS ── */
+.day-type-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.day-btn {
+  min-height: 56px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  background: var(--bg-input);
+  color: var(--text-muted);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.day-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+/* ── WIZARD ── */
+#wizard-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 0 16px;
+}
+.progress-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border-light);
+  transition: all 0.2s;
+}
+.progress-dot.done { background: var(--accent-dim); }
+.progress-dot.active { background: var(--accent); width: 20px; border-radius: 4px; }
+
+.wizard-step { display: none; }
+.wizard-step.active { display: block; }
+
+.step-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+.step-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.wizard-nav {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-bottom: 8px;
+}
+.wizard-nav .btn { flex: 1; }
+
+/* ── REP CARD ── */
+.rep-card {
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+}
+.rep-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.rep-number {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.rep-delete {
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px 8px;
+  line-height: 1;
+}
+.rep-sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+
+.stop-zone {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+#stop-status {
+  display: none;
+  background: var(--accent-red-dim);
+  border: 1px solid var(--accent-red);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--accent-red);
+  font-weight: 600;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.rep-counter {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+/* ── LIFT ROWS ── */
+.lift-row {
+  display: grid;
+  grid-template-columns: 1fr 44px 44px 64px 60px 32px;
+  gap: 6px;
+  margin-bottom: 8px;
+  align-items: start;
+}
+.lift-row-header {
+  display: grid;
+  grid-template-columns: 1fr 44px 44px 64px 60px 32px;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.lift-row-header span {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.lift-row input { min-height: 40px; font-size: 14px; padding: 0 8px; text-align: center; }
+.lift-row input.lift-name { text-align: left; padding: 0 10px; }
+.lift-del {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  font-size: 16px;
+  cursor: pointer;
+  min-height: 40px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lift-del:hover { color: var(--accent-red); border-color: var(--accent-red); }
+
+.verdict-select-row {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── BADGES ── */
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge-green { background: var(--accent-green-dim); color: var(--accent-green); }
+.badge-red { background: var(--accent-red-dim); color: var(--accent-red); }
+.badge-yellow { background: var(--accent-yellow-dim); color: var(--accent-yellow); }
+.badge-amber { background: var(--accent-dim); color: var(--accent); }
+.badge-blue { background: var(--accent-blue-dim); color: var(--accent-blue); }
+.badge-muted { background: #2a2a2a; color: var(--text-muted); }
+
+/* ── ANALYSIS RESULTS ── */
+.analysis-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.analysis-row:last-child { border-bottom: none; }
+.analysis-label { font-size: 13px; color: var(--text-muted); }
+.analysis-explanation {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── PLAN ── */
+.plan-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.plan-field:last-child { border-bottom: none; }
+.plan-field-label { font-size: 13px; color: var(--text-muted); }
+.plan-field-val { font-size: 15px; font-weight: 700; color: var(--accent); }
+.plan-reason {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-top: 2px;
+  text-align: right;
+}
+.plan-override { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.plan-override label { font-size: 12px; }
+.plan-override input { min-height: 40px; font-size: 14px; }
+
+.planned-vs-actual {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.planned-vs-actual .swapped { color: var(--accent-yellow); }
+
+/* ── HISTORY ── */
+#trend-chart {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+.chart-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.session-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+.session-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.session-card-header:active { background: var(--bg-card2); }
+.session-card-meta { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.session-card-body { display: none; padding: 0 16px 14px; border-top: 1px solid var(--border); }
+.session-card-body.open { display: block; }
+.session-stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.session-stat {
+  background: var(--bg-card2);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.session-stat strong { color: var(--text); display: block; font-size: 15px; }
+
+/* ── COLLAPSIBLE ── */
+.collapsible-section { margin-bottom: 8px; }
+.collapsible-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+  font-weight: 600;
+}
+.collapsible-header .chevron {
+  font-size: 12px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+.collapsible-header.open { border-radius: var(--radius) var(--radius) 0 0; border-bottom-color: transparent; }
+.collapsible-header.open .chevron { transform: rotate(180deg); }
+.collapsible-body {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 14px 16px;
+}
+.collapsible-body.open { display: block; }
+.rules-list { list-style: none; }
+.rules-list li {
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  line-height: 1.5;
+}
+.rules-list li:last-child { border-bottom: none; }
+.rules-list li strong { color: var(--text); }
+.cue-item {
+  padding: 10px 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+.cue-item:last-child { border-bottom: none; }
+
+/* ── DATA TAB ── */
+.data-action {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+.data-action:last-child { border-bottom: none; }
+.data-action-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+#reset-confirm {
+  background: var(--accent-red-dim);
+  border: 1px solid var(--accent-red);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-top: 10px;
+}
+#reset-confirm p { font-size: 13px; color: var(--accent-red); margin-bottom: 10px; font-weight: 600; }
+#reset-confirm .btn-row { display: flex; gap: 10px; }
+
+/* ── MISC ── */
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); font-size: 13px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mb-0 { margin-bottom: 0; }
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; }
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+.inline-row { display: flex; gap: 10px; }
+.inline-row .field { flex: 1; }
+
+/* accessory swap select */
+.accessory-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.accessory-row:last-child { border-bottom: none; }
+.accessory-name { flex: 1; font-size: 13px; }
+.accessory-swap select {
+  min-height: 36px;
+  font-size: 13px;
+  padding: 4px 28px 4px 8px;
+  width: auto;
+  min-width: 140px;
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- ── TOP BAR ── -->
+  <div style="position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:17px;font-weight:800;letter-spacing:-0.03em;">SPRINT <span style="color:var(--accent)">LAB</span></div>
+    <div id="top-date" style="font-size:12px;color:var(--text-muted);"></div>
+  </div>
+
+  <!-- ── LOG TAB ── -->
+  <div id="tab-log" class="tab-panel active">
+    <div id="wizard-progress"></div>
+
+    <!-- Step 1: Readiness -->
+    <div id="step-1" class="wizard-step active">
+      <div class="step-title">Readiness</div>
+      <div class="step-subtitle">How are you showing up today?</div>
+
+      <div class="card">
+        <div class="toggle-row">
+          <span class="toggle-label">Bad sleep?</span>
+          <div class="toggle-switch">
+            <button id="sleep-no" class="active" onclick="setSleep(false)">No</button>
+            <button id="sleep-yes" onclick="setSleep(true)">Yes</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div id="readiness-sliders"></div>
+      </div>
+
+      <div class="card">
+        <div class="field mb-0">
+          <label>Notes (optional)</label>
+          <textarea id="r-notes" placeholder="Any context…" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="btn btn-primary" onclick="Wizard.goNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Sprint Setup -->
+    <div id="step-2" class="wizard-step">
+      <div class="step-title">Sprint Setup</div>
+      <div class="step-subtitle">Configure this session</div>
+
+      <div class="card">
+        <div class="card-title">Day Type</div>
+        <div class="day-type-row">
+          <button class="day-btn" id="day1-btn" onclick="setDayType('day1')">Day 1</button>
+          <button class="day-btn" id="day2-btn" onclick="setDayType('day2')">Day 2</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Distances (metres)</div>
+        <div class="inline-row">
+          <div class="field">
+            <label>Build</label>
+            <input type="number" id="s-build" value="30" min="15" max="40">
+          </div>
+          <div class="field">
+            <label>Fly</label>
+            <input type="number" id="s-fly" value="15" min="10" max="30">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Rep Range</div>
+        <div class="inline-row">
+          <div class="field">
+            <label>Floor (min)</label>
+            <input type="number" id="s-floor" value="3" min="1" max="6">
+          </div>
+          <div class="field">
+            <label>Ceiling (max)</label>
+            <input type="number" id="s-ceiling" value="6" min="1" max="8">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field mb-0">
+          <label>Notes (optional)</label>
+          <textarea id="s-notes" placeholder="Track conditions, etc." rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="btn btn-secondary" onclick="Wizard.goBack()">← Back</button>
+        <button class="btn btn-primary" onclick="Wizard.goNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Rep Logging -->
+    <div id="step-3" class="wizard-step">
+      <div class="step-title">Rep Logging</div>
+      <div id="rep-step-subtitle" class="step-subtitle">Log each rep after it's done</div>
+      <div id="rep-counter" class="rep-counter"></div>
+      <div id="rep-cards-container"></div>
+      <div class="stop-zone">
+        <button id="btn-stop" class="btn btn-red" onclick="Wizard.triggerStop()">⛔ STOP SESSION — Forced / Bad Rep</button>
+        <div id="stop-status">Session stopped. Record what happened in notes.</div>
+      </div>
+      <div class="wizard-nav">
+        <button class="btn btn-secondary" onclick="Wizard.goBack()">← Back</button>
+        <button id="btn-add-rep" class="btn btn-green" onclick="Wizard.addRepCard()" style="flex:2;">+ Add Rep</button>
+        <button class="btn btn-primary" onclick="Wizard.goNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Lift -->
+    <div id="step-4" class="wizard-step">
+      <div class="step-title">Lift</div>
+      <div class="step-subtitle">Log what you lifted</div>
+
+      <div class="card">
+        <div class="lift-row-header">
+          <span>Exercise</span><span>Sets</span><span>Reps</span><span>Load</span><span>RPE</span><span></span>
+        </div>
+        <div id="lift-rows-container"></div>
+        <button class="btn btn-secondary mt-12" onclick="Wizard.addLiftRow()" style="font-size:13px;min-height:40px;">+ Add Exercise</button>
+      </div>
+
+      <div class="card verdict-select-row">
+        <div class="card-title">Session Feel</div>
+        <div class="field mb-0">
+          <label>How did the lift feel relative to the sprints?</label>
+          <select id="lift-verdict">
+            <option value="supportive">Supportive — left me feeling good</option>
+            <option value="neutral">Neutral — didn't help or hurt</option>
+            <option value="too_much">Too much — left me feeling heavy/depleted</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field mb-0">
+          <label>Notes (optional)</label>
+          <textarea id="l-notes" placeholder="What felt off, what felt good…" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="btn btn-secondary" onclick="Wizard.goBack()">← Back</button>
+        <button class="btn btn-primary" onclick="Wizard.goNext()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Summary -->
+    <div id="step-5" class="wizard-step">
+      <div class="step-title">Summary</div>
+      <div class="step-subtitle">Wrap it up</div>
+
+      <div class="card">
+        <div class="field">
+          <label>Best part of the session</label>
+          <textarea id="sum-best" placeholder="What felt right?" rows="2"></textarea>
+        </div>
+        <div class="field">
+          <label>Breakdown point</label>
+          <textarea id="sum-break" placeholder="Where / when did quality drop?" rows="2"></textarea>
+        </div>
+        <div class="field mb-0">
+          <label>Other notes</label>
+          <textarea id="sum-notes" placeholder="Anything else…" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="wizard-nav">
+        <button class="btn btn-secondary" onclick="Wizard.goBack()">← Back</button>
+        <button class="btn btn-primary" onclick="Wizard.submitSession()" style="flex:2;">Save Session ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ANALYZE TAB ── -->
+  <div id="tab-analyzer" class="tab-panel">
+    <div class="page-header">
+      <div class="page-title">Ana<span>lyze</span></div>
+    </div>
+    <div class="field">
+      <label>Select session</label>
+      <select id="analyzer-session-select" onchange="AnalyzerTab.onSelect()"></select>
+    </div>
+    <div id="analysis-results"></div>
+  </div>
+
+  <!-- ── PLAN TAB ── -->
+  <div id="tab-plan" class="tab-panel">
+    <div class="page-header">
+      <div class="page-title">Next <span>Plan</span></div>
+    </div>
+    <div id="plan-display"></div>
+  </div>
+
+  <!-- ── HISTORY TAB ── -->
+  <div id="tab-history" class="tab-panel">
+    <div class="page-header">
+      <div class="page-title">His<span>tory</span></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Trend — Last 5 Sessions</div>
+      <canvas id="trend-chart" height="180"></canvas>
+      <div class="chart-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div>Quality avg</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ccc"></div>Ease avg</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent-blue)"></div>Consistency</div>
+      </div>
+    </div>
+    <div id="session-cards"></div>
+  </div>
+
+  <!-- ── RULES TAB ── -->
+  <div id="tab-rules" class="tab-panel">
+    <div class="page-header">
+      <div class="page-title">Ru<span>les</span></div>
+    </div>
+    <div id="rules-content"></div>
+  </div>
+
+  <!-- ── DATA TAB ── -->
+  <div id="tab-data" class="tab-panel">
+    <div class="page-header">
+      <div class="page-title">Da<span>ta</span></div>
+    </div>
+    <div class="card">
+      <div class="data-action">
+        <div class="data-action-desc">Export all sessions and settings as a JSON file.</div>
+        <button class="btn btn-secondary" onclick="Storage.exportJSON()">Export JSON</button>
+      </div>
+      <div class="data-action">
+        <div class="data-action-desc">Import a previously exported JSON file. This replaces all current data.</div>
+        <button class="btn btn-secondary" onclick="document.getElementById('file-import').click()">Import JSON</button>
+        <input type="file" id="file-import" accept=".json" style="display:none" onchange="Storage.importJSON(this)">
+      </div>
+      <div class="data-action">
+        <div class="data-action-desc">Permanently delete all data and reset to sample sessions.</div>
+        <button class="btn btn-danger" onclick="document.getElementById('reset-confirm').style.display='block'">Reset All Data</button>
+        <div id="reset-confirm" style="display:none;">
+          <p>This cannot be undone. Are you sure?</p>
+          <div class="btn-row">
+            <button class="btn btn-danger" style="flex:1" onclick="Storage.reset()">Yes, reset</button>
+            <button class="btn btn-secondary" style="flex:1" onclick="document.getElementById('reset-confirm').style.display='none'">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;padding:20px 0;font-size:11px;color:var(--text-dim);">Sprint Lab · Phase 0 · localStorage only</div>
+  </div>
+
+  <!-- ── BOTTOM NAV ── -->
+  <nav id="main-nav">
+    <button class="active" onclick="Nav.goTo('log')" data-tab="log">
+      <span class="nav-icon">✦</span>Log
+    </button>
+    <button onclick="Nav.goTo('analyzer')" data-tab="analyzer">
+      <span class="nav-icon">◎</span>Analyze
+    </button>
+    <button onclick="Nav.goTo('plan')" data-tab="plan">
+      <span class="nav-icon">→</span>Plan
+    </button>
+    <button onclick="Nav.goTo('history')" data-tab="history">
+      <span class="nav-icon">≋</span>History
+    </button>
+    <button onclick="Nav.goTo('rules')" data-tab="rules">
+      <span class="nav-icon">§</span>Rules
+    </button>
+    <button onclick="Nav.goTo('data')" data-tab="data">
+      <span class="nav-icon">⊞</span>Data
+    </button>
+  </nav>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
+const Utils = {
+  uuid() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  },
+  fmtDate(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  },
+  fmtDateShort(iso) {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  },
+  clamp(v, min, max) { return Math.max(min, Math.min(max, v)); },
+  avg(arr) {
+    if (!arr || !arr.length) return 0;
+    return arr.reduce((a, b) => a + b, 0) / arr.length;
+  },
+  stddev(arr) {
+    if (!arr || arr.length < 2) return 0;
+    const m = Utils.avg(arr);
+    return Math.sqrt(arr.reduce((s, v) => s + (v - m) ** 2, 0) / arr.length);
+  },
+  // Linear regression slope (positive = increasing, negative = decreasing)
+  slope(arr) {
+    if (!arr || arr.length < 2) return 0;
+    const n = arr.length;
+    const xs = arr.map((_, i) => i);
+    const mx = Utils.avg(xs), my = Utils.avg(arr);
+    const num = xs.reduce((s, x, i) => s + (x - mx) * (arr[i] - my), 0);
+    const den = xs.reduce((s, x) => s + (x - mx) ** 2, 0);
+    return den === 0 ? 0 : num / den;
+  },
+  consistencyScore(arr) {
+    if (!arr || arr.length < 2) return 1;
+    return Utils.clamp(1 - Utils.stddev(arr) / 3, 0, 1);
+  },
+  last(arr) { return arr[arr.length - 1]; }
+};
+
+// ═══════════════════════════════════════════════════════
+// SAMPLE DATA
+// ═══════════════════════════════════════════════════════
+const SampleData = {
+  sessions: [
+    {
+      id: 's1',
+      date: '2026-04-06T10:00:00Z',
+      dayType: 'day1',
+      readiness: { badSleep: false, legFreshness: 8, generalFreshness: 8, energy: 9, notes: 'Felt ready, legs bouncy' },
+      sprint: {
+        build: 30, fly: 15, floorReps: 3, ceilingReps: 5,
+        stopTriggered: false, notes: 'Dry track, good weather',
+        reps: [
+          { repNum: 1, quality: 8, ease: 8, rhythm: 8, confidence: 8, notes: '' },
+          { repNum: 2, quality: 9, ease: 8, rhythm: 9, confidence: 9, notes: 'Felt fast and tall' },
+          { repNum: 3, quality: 8, ease: 8, rhythm: 8, confidence: 8, notes: '' },
+          { repNum: 4, quality: 9, ease: 9, rhythm: 9, confidence: 9, notes: 'Best rep' },
+          { repNum: 5, quality: 8, ease: 8, rhythm: 8, confidence: 8, notes: '' }
+        ]
+      },
+      lift: {
+        verdict: 'supportive',
+        notes: 'Squat felt strong',
+        exercises: [
+          { name: 'Back Squat', sets: 4, reps: 4, load: '135lb', rpe: 7, notes: '' },
+          { name: 'RDL', sets: 3, reps: 5, load: '115lb', rpe: 6, notes: '' },
+          { name: 'Single-leg Drop Landing', sets: 3, reps: 4, load: 'BW', rpe: 5, notes: '' },
+          { name: 'Ankle Pogos', sets: 2, reps: 6, load: 'BW', rpe: 4, notes: '' }
+        ]
+      },
+      summary: { bestPart: 'Rep 2 and 4 — really tall and elastic', breakdownPoint: 'None', notes: '' }
+    },
+    {
+      id: 's2',
+      date: '2026-04-09T10:30:00Z',
+      dayType: 'day2',
+      readiness: { badSleep: false, legFreshness: 6, generalFreshness: 6, energy: 7, notes: 'Decent, slight heaviness' },
+      sprint: {
+        build: 30, fly: 15, floorReps: 3, ceilingReps: 5,
+        stopTriggered: false, notes: '',
+        reps: [
+          { repNum: 1, quality: 7, ease: 6, rhythm: 6, confidence: 7, notes: '' },
+          { repNum: 2, quality: 6, ease: 6, rhythm: 6, confidence: 6, notes: 'Slightly flat' },
+          { repNum: 3, quality: 6, ease: 7, rhythm: 7, confidence: 6, notes: '' },
+          { repNum: 4, quality: 7, ease: 6, rhythm: 6, confidence: 7, notes: '' }
+        ]
+      },
+      lift: {
+        verdict: 'neutral',
+        notes: '',
+        exercises: [
+          { name: 'Back Squat', sets: 4, reps: 4, load: '130lb', rpe: 8, notes: '' },
+          { name: 'RDL', sets: 3, reps: 5, load: '110lb', rpe: 7, notes: '' },
+          { name: 'Nordic Curl', sets: 3, reps: 4, load: 'BW', rpe: 8, notes: '' }
+        ]
+      },
+      summary: { bestPart: 'Held together reasonably', breakdownPoint: 'Rep 2 slightly flat feel', notes: '' }
+    },
+    {
+      id: 's3',
+      date: '2026-04-13T09:45:00Z',
+      dayType: 'day1',
+      readiness: { badSleep: true, legFreshness: 4, generalFreshness: 5, energy: 4, notes: 'Poor sleep, heavy legs all morning' },
+      sprint: {
+        build: 30, fly: 15, floorReps: 3, ceilingReps: 5,
+        stopTriggered: true, notes: 'Should have called it earlier',
+        reps: [
+          { repNum: 1, quality: 6, ease: 5, rhythm: 5, confidence: 5, notes: '' },
+          { repNum: 2, quality: 5, ease: 4, rhythm: 4, confidence: 4, notes: 'Muscular feel' },
+          { repNum: 3, quality: 4, ease: 3, rhythm: 4, confidence: 4, notes: 'Forced — stop' }
+        ]
+      },
+      lift: {
+        verdict: 'too_much',
+        notes: 'Should have done less',
+        exercises: [
+          { name: 'Back Squat', sets: 5, reps: 5, load: '140lb', rpe: 9, notes: 'Grinder' },
+          { name: 'RDL', sets: 3, reps: 5, load: '120lb', rpe: 9, notes: '' }
+        ]
+      },
+      summary: { bestPart: 'Showed up', breakdownPoint: 'Rep 2 onwards — forced and muscular', notes: 'Next time skip or reduce on bad sleep' }
+    }
+  ],
+  nextPlan: null,
+  settings: {}
+};
+
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const State = {
+  sessions: [],
+  nextPlan: null,
+  settings: {},
+  activeTab: 'log',
+  wizard: {
+    step: 1,
+    session: { readiness: {}, sprint: { reps: [] }, lift: { exercises: [] }, summary: {} },
+    stopTriggered: false,
+    repCount: 0
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// STORAGE
+// ═══════════════════════════════════════════════════════
+const Storage = {
+  KEY: 'sprintlab_v1',
+  load() {
+    try {
+      const raw = localStorage.getItem(this.KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        State.sessions = data.sessions || [];
+        State.nextPlan = data.nextPlan || null;
+        State.settings = data.settings || {};
+      } else {
+        State.sessions = JSON.parse(JSON.stringify(SampleData.sessions));
+        State.nextPlan = null;
+        this.save();
+      }
+    } catch(e) {
+      State.sessions = JSON.parse(JSON.stringify(SampleData.sessions));
+      this.save();
+    }
+    // Compute analysis for any sessions missing it
+    State.sessions.forEach((s, i) => {
+      if (!s.analysis) {
+        s.analysis = Analyzer.analyzeSession(s, State.sessions.slice(0, i));
+      }
+    });
+  },
+  save() {
+    localStorage.setItem(this.KEY, JSON.stringify({
+      sessions: State.sessions,
+      nextPlan: State.nextPlan,
+      settings: State.settings
+    }));
+  },
+  exportJSON() {
+    const blob = new Blob([JSON.stringify({ sessions: State.sessions, nextPlan: State.nextPlan, settings: State.settings }, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `sprintlab-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  },
+  importJSON(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!Array.isArray(data.sessions)) throw new Error('Invalid format');
+        State.sessions = data.sessions;
+        State.nextPlan = data.nextPlan || null;
+        State.settings = data.settings || {};
+        Storage.save();
+        App.refresh();
+        alert('Import successful — ' + data.sessions.length + ' sessions loaded.');
+      } catch(err) {
+        alert('Import failed: ' + err.message);
+      }
+      input.value = '';
+    };
+    reader.readAsText(file);
+  },
+  reset() {
+    State.sessions = JSON.parse(JSON.stringify(SampleData.sessions));
+    State.nextPlan = null;
+    State.sessions.forEach((s, i) => {
+      s.analysis = Analyzer.analyzeSession(s, State.sessions.slice(0, i));
+    });
+    this.save();
+    document.getElementById('reset-confirm').style.display = 'none';
+    App.refresh();
+    alert('Reset complete.');
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// NAV
+// ═══════════════════════════════════════════════════════
+const Nav = {
+  goTo(tabId) {
+    State.activeTab = tabId;
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    document.querySelectorAll('#main-nav button').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tabId);
+    });
+    if (tabId === 'analyzer') AnalyzerTab.render();
+    if (tabId === 'plan') PlanTab.render();
+    if (tabId === 'history') History.render();
+    if (tabId === 'rules') Rules.render();
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// ANALYZER (pure logic — no DOM)
+// ═══════════════════════════════════════════════════════
+const Analyzer = {
+  analyzeSession(session, priorSessions) {
+    const reps = session.sprint.reps || [];
+    const qualArr = reps.map(r => r.quality);
+    const easeArr = reps.map(r => r.ease);
+    const rhythmArr = reps.map(r => r.rhythm);
+    const confArr = reps.map(r => r.confidence);
+
+    const qualAvg = Utils.avg(qualArr);
+    const easeAvg = Utils.avg(easeArr);
+    const rhythmAvg = Utils.avg(rhythmArr);
+
+    const qualConsist = Utils.consistencyScore(qualArr);
+    const easeConsist = Utils.consistencyScore(easeArr);
+    const rhythmConsist = Utils.consistencyScore(rhythmArr);
+    const sessionConsistency = Utils.avg([qualConsist, easeConsist, rhythmConsist]);
+
+    const readiness = session.readiness;
+    const readinessScore = Utils.avg([readiness.legFreshness, readiness.generalFreshness, readiness.energy]) - (readiness.badSleep ? 1.5 : 0);
+
+    const stopTriggered = session.sprint.stopTriggered;
+    const repCount = reps.length;
+    const ceilingReps = session.sprint.ceilingReps;
+    const floorReps = session.sprint.floorReps;
+
+    // qualityDropFromBest = max - last rep quality
+    const qualMax = qualArr.length ? Math.max(...qualArr) : 0;
+    const qualDropFromBest = qualArr.length ? qualMax - qualArr[qualArr.length - 1] : 0;
+    const easeMax = easeArr.length ? Math.max(...easeArr) : 0;
+    const easeDropFromBest = easeArr.length ? easeMax - easeArr[easeArr.length - 1] : 0;
+    const trendScore = Utils.slope(qualArr);
+
+    // ── Session verdict ──
+    let sessionVerdict;
+    if (stopTriggered && repCount <= 2) {
+      sessionVerdict = 'abort';
+    } else if (qualAvg >= 7.5 && easeAvg >= 7.0 && sessionConsistency >= 0.7 && !stopTriggered && repCount >= ceilingReps) {
+      sessionVerdict = 'strong';
+    } else if (qualAvg >= 6.0 && easeAvg >= 6.0 && !stopTriggered) {
+      sessionVerdict = 'acceptable';
+    } else {
+      sessionVerdict = 'degraded';
+    }
+
+    // ── Sprint dose ──
+    let sprintDose;
+    if (!stopTriggered && repCount < floorReps) {
+      sprintDose = 'low';
+    } else if (repCount > ceilingReps || (sessionVerdict === 'degraded' && repCount > floorReps)) {
+      sprintDose = 'high';
+    } else {
+      sprintDose = 'good';
+    }
+
+    // ── Lift dose ──
+    const liftVerdict = session.lift.verdict;
+    const liftRPEs = (session.lift.exercises || []).map(e => e.rpe).filter(Boolean);
+    const avgRPE = Utils.avg(liftRPEs);
+
+    let liftDose;
+    if (liftVerdict === 'supportive' && sessionVerdict !== 'degraded') {
+      liftDose = 'supportive';
+    } else if (liftVerdict === 'too_much' && (sessionVerdict === 'degraded' || stopTriggered || qualDropFromBest >= 2)) {
+      liftDose = 'risk';
+    } else {
+      liftDose = 'neutral';
+    }
+
+    // ── Issue type ──
+    const fatiguePattern = trendScore < -0.4 && qualDropFromBest >= 2 && easeDropFromBest >= 1.5;
+
+    let issueType = 'none';
+    if (fatiguePattern && session.dayType === 'day2' && liftDose === 'risk') {
+      issueType = 'lift_interference';
+    } else if (fatiguePattern) {
+      issueType = 'fatigue';
+    } else if (easeArr.length > 0 && easeArr[0] <= 6 && qualAvg <= 6.5) {
+      issueType = 'force';
+    } else if (rhythmAvg < 6 && (qualAvg - rhythmAvg) > 1.5) {
+      issueType = 'coordination';
+    } else if (priorSessions && priorSessions.length >= 2) {
+      const last3 = [...priorSessions.slice(-2), session];
+      const allAcceptable = last3.every(s => s.analysis && (s.analysis.sessionVerdict === 'strong' || s.analysis.sessionVerdict === 'acceptable'));
+      const flyUnchanged = last3.every(s => s.sprint.fly === session.sprint.fly);
+      const repsUnchanged = last3.every(s => s.sprint.ceilingReps === session.sprint.ceilingReps);
+      if (allAcceptable && flyUnchanged && repsUnchanged && sessionConsistency >= 0.7 && qualAvg >= 7) {
+        issueType = 'exposure';
+      }
+    }
+
+    // ── Progression decision ──
+    // Need last 2 prior sessions for progress checks
+    const prev = priorSessions ? priorSessions.slice(-2) : [];
+    const bothStrong = prev.length >= 2 && prev.every(s => s.analysis && s.analysis.sessionVerdict === 'strong');
+    const bothStrongConsistent = bothStrong && prev.every(s => s.analysis && s.analysis.sessionConsistency >= 0.7);
+
+    // Fly unchanged for last 2+ sessions
+    const flyHistory = [...(priorSessions || []), session].map(s => s.sprint.fly);
+    const flyUnchanged2 = flyHistory.length >= 2 && flyHistory.slice(-2).every(f => f === session.sprint.fly);
+
+    let progressionDecision;
+    if (stopTriggered || sessionVerdict === 'degraded' || sessionVerdict === 'abort') {
+      // Check for fly regression: 2 consecutive degraded + force issue
+      const prev1 = priorSessions && priorSessions.length >= 1 ? priorSessions[priorSessions.length - 1] : null;
+      const prevDegraded = prev1 && prev1.analysis && (prev1.analysis.sessionVerdict === 'degraded' || prev1.analysis.sessionVerdict === 'abort');
+      if (prevDegraded && issueType === 'force') {
+        progressionDecision = 'regress_fly';
+      } else {
+        progressionDecision = 'regress_reps';
+      }
+    } else if (bothStrongConsistent && repCount >= ceilingReps && ceilingReps >= 6 && flyUnchanged2 && readinessScore >= 6) {
+      progressionDecision = 'progress_fly';
+    } else if (bothStrongConsistent && repCount >= ceilingReps && readinessScore >= 6) {
+      progressionDecision = 'progress_reps';
+    } else {
+      progressionDecision = 'hold';
+    }
+
+    return {
+      readinessScore: Math.round(readinessScore * 10) / 10,
+      sessionVerdict,
+      sprintDose,
+      liftDose,
+      issueType,
+      progressionDecision,
+      sessionConsistency: Math.round(sessionConsistency * 100) / 100,
+      qualAvg: Math.round(qualAvg * 10) / 10,
+      easeAvg: Math.round(easeAvg * 10) / 10,
+      rhythmAvg: Math.round(rhythmAvg * 10) / 10,
+      qualDropFromBest: Math.round(qualDropFromBest * 10) / 10,
+      trendScore: Math.round(trendScore * 100) / 100
+    };
+  },
+  explanationText(a, session) {
+    const lines = [];
+    const v = a.sessionVerdict;
+    const d = a.progressionDecision;
+    if (v === 'strong') lines.push(`Session was strong — quality avg ${a.qualAvg}, ease avg ${a.easeAvg}, consistency ${Math.round(a.sessionConsistency * 100)}%.`);
+    else if (v === 'acceptable') lines.push(`Session was acceptable. Quality avg ${a.qualAvg}, ease avg ${a.easeAvg}. Not yet strong enough to count toward progression.`);
+    else if (v === 'degraded') lines.push(`Session degraded — quality avg ${a.qualAvg}, ease avg ${a.easeAvg}. ${session.sprint.stopTriggered ? 'Stop was triggered.' : 'Quality/ease fell below threshold.'}`);
+    else lines.push('Session aborted early — stop triggered on rep 1 or 2.');
+
+    if (a.issueType === 'fatigue') lines.push('Pattern: fatigue — quality trending downward across the session (slope ' + a.trendScore + ', drop from best: ' + a.qualDropFromBest + ' pts).');
+    else if (a.issueType === 'lift_interference') lines.push('Pattern: lift interference — fatigue pattern on Day 2 combined with high lift demand.');
+    else if (a.issueType === 'force') lines.push('Pattern: force/stiffness — ease was low from the first rep, suggesting the limiter is force expression, not accumulated fatigue.');
+    else if (a.issueType === 'coordination') lines.push('Pattern: coordination — rhythm significantly lagged quality. Foot placement or timing may be off.');
+    else if (a.issueType === 'exposure') lines.push('Pattern: exposure — quality is consistent but not progressing. Consider increasing fly or rep ceiling.');
+
+    if (d === 'progress_reps') lines.push('Decision: progress → add 1 rep next session.');
+    else if (d === 'progress_fly') lines.push('Decision: progress → extend fly by 5m next session (reps reset to floor).');
+    else if (d === 'hold') lines.push('Decision: hold — repeat the same parameters. Need 2 consecutive strong sessions to progress.');
+    else if (d === 'regress_reps') lines.push('Decision: regress → drop to floor reps next session. Fly unchanged.');
+    else if (d === 'regress_fly') lines.push('Decision: regress → reduce fly by 5m. Two consecutive degraded sessions with a force pattern detected.');
+
+    if (a.liftDose === 'risk') lines.push('Lift was heavy relative to sprint outcome — consider reducing sets by 1 next time.');
+    return lines.join(' ');
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// WIZARD
+// ═══════════════════════════════════════════════════════
+const Wizard = {
+  READINESS_SLIDERS: [
+    { id: 'r-legfresh', key: 'legFreshness', label: 'Leg Freshness' },
+    { id: 'r-genfresh', key: 'generalFreshness', label: 'General Freshness' },
+    { id: 'r-energy', key: 'energy', label: 'Energy' }
+  ],
+
+  init() {
+    this.renderProgress();
+    this.renderReadinessSliders();
+    this.populateStep2Defaults();
+    this.resetRepState();
+    this.populateLiftDefaults();
+    document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  },
+
+  renderProgress() {
+    const container = document.getElementById('wizard-progress');
+    container.innerHTML = '';
+    for (let i = 1; i <= 5; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'progress-dot' + (i < State.wizard.step ? ' done' : '') + (i === State.wizard.step ? ' active' : '');
+      container.appendChild(dot);
+    }
+  },
+
+  renderReadinessSliders() {
+    const container = document.getElementById('readiness-sliders');
+    container.innerHTML = this.READINESS_SLIDERS.map(s => this.sliderHTML(s.id, s.label, 7)).join('');
+  },
+
+  sliderHTML(id, label, defaultVal) {
+    return `
+      <div class="slider-group">
+        <div class="slider-header">
+          <span class="slider-label">${label}</span>
+          <span class="slider-val" id="${id}-val">${defaultVal} / 10</span>
+        </div>
+        <input type="range" id="${id}" min="1" max="10" value="${defaultVal}"
+          oninput="document.getElementById('${id}-val').textContent = this.value + ' / 10'">
+      </div>`;
+  },
+
+  sliderHTMLCompact(id, label, defaultVal) {
+    return `
+      <div class="slider-group" style="margin-bottom:10px;">
+        <div class="slider-header">
+          <span style="font-size:12px;color:var(--text-muted);">${label}</span>
+          <span class="slider-val" id="${id}-val" style="font-size:13px;">${defaultVal} / 10</span>
+        </div>
+        <input type="range" id="${id}" min="1" max="10" value="${defaultVal}"
+          oninput="document.getElementById('${id}-val').textContent = this.value + ' / 10'">
+      </div>`;
+  },
+
+  populateStep2Defaults() {
+    const plan = State.nextPlan;
+    if (plan) {
+      if (plan.build) document.getElementById('s-build').value = plan.build;
+      if (plan.fly) document.getElementById('s-fly').value = plan.fly;
+      if (plan.floorReps) document.getElementById('s-floor').value = plan.floorReps;
+      if (plan.ceilingReps) document.getElementById('s-ceiling').value = plan.ceilingReps;
+      if (plan.dayType) setDayType(plan.dayType);
+    }
+    // Set wizard session day type default
+    if (!State.wizard.session.dayType) State.wizard.session.dayType = null;
+  },
+
+  resetRepState() {
+    State.wizard.stopTriggered = false;
+    State.wizard.repCount = 0;
+    document.getElementById('rep-cards-container').innerHTML = '';
+    document.getElementById('btn-stop').disabled = false;
+    document.getElementById('btn-stop').style.opacity = '';
+    document.getElementById('stop-status').style.display = 'none';
+    this.updateRepCounter();
+  },
+
+  populateLiftDefaults() {
+    const dayType = State.wizard.session.dayType || 'day1';
+    const container = document.getElementById('lift-rows-container');
+    container.innerHTML = '';
+    const defaults = this.defaultExercises(dayType);
+    defaults.forEach(ex => this.addLiftRowWithData(ex));
+  },
+
+  defaultExercises(dayType) {
+    if (dayType === 'day2') return [
+      { name: 'Back Squat', sets: 4, reps: 4, load: '', rpe: 7 },
+      { name: 'RDL', sets: 3, reps: 5, load: '', rpe: 6 },
+      { name: 'Nordic Curl', sets: 3, reps: 4, load: 'BW', rpe: 7 },
+      { name: 'Copenhagen Hold', sets: 2, reps: 0, load: 'BW', rpe: 5 }
+    ];
+    return [
+      { name: 'Back Squat', sets: 4, reps: 4, load: '', rpe: 7 },
+      { name: 'RDL', sets: 3, reps: 5, load: '', rpe: 6 },
+      { name: 'Single-leg Drop Landing', sets: 3, reps: 4, load: 'BW', rpe: 5 },
+      { name: 'Ankle Pogos', sets: 2, reps: 6, load: 'BW', rpe: 4 }
+    ];
+  },
+
+  addLiftRow() { this.addLiftRowWithData({ name: '', sets: 3, reps: 5, load: '', rpe: 7 }); },
+
+  addLiftRowWithData(ex) {
+    const id = Utils.uuid().slice(0, 8);
+    const container = document.getElementById('lift-rows-container');
+    const div = document.createElement('div');
+    div.className = 'lift-row';
+    div.id = 'lift-row-' + id;
+    const LIFT_NAMES = ['Back Squat','Front Squat','RDL','Deadlift','Nordic Curl','Leg Curl','Single-leg Drop Landing','Ankle Pogos','Hip Thrust','Copenhagen Hold','Hip Flexor March','Box Jump','Broad Jump','Step Up','Calf Raise','A-Skip','Leg Press'];
+    const listId = 'lifts-list-' + id;
+    div.innerHTML = `
+      <datalist id="${listId}">${LIFT_NAMES.map(n => `<option value="${n}">`).join('')}</datalist>
+      <input type="text" class="lift-name" list="${listId}" value="${ex.name}" placeholder="Exercise">
+      <input type="number" value="${ex.sets}" min="1" max="10" placeholder="—">
+      <input type="number" value="${ex.reps}" min="0" max="20" placeholder="—">
+      <input type="text" value="${ex.load}" placeholder="load">
+      <div style="display:flex;align-items:center;gap:4px;">
+        <input type="range" min="1" max="10" value="${ex.rpe}" style="flex:1;height:28px;"
+          oninput="this.nextElementSibling.textContent=this.value">
+        <span style="font-size:12px;color:var(--accent);min-width:14px;">${ex.rpe}</span>
+      </div>
+      <button class="lift-del" onclick="document.getElementById('lift-row-${id}').remove()">×</button>`;
+    container.appendChild(div);
+  },
+
+  goNext() {
+    const step = State.wizard.step;
+    if (step === 1) {
+      this.readStep1();
+    } else if (step === 2) {
+      if (!State.wizard.session.dayType) {
+        alert('Select Day 1 or Day 2 first.');
+        return;
+      }
+      this.readStep2();
+      // Refresh lift defaults with selected day type
+      this.populateLiftDefaults();
+    } else if (step === 3) {
+      if (State.wizard.repCount === 0 && !State.wizard.stopTriggered) {
+        alert('Add at least one rep, or trigger stop.');
+        return;
+      }
+      this.readStep3();
+    } else if (step === 4) {
+      this.readStep4();
+    }
+    State.wizard.step++;
+    this.showStep(State.wizard.step);
+  },
+
+  goBack() {
+    if (State.wizard.step <= 1) return;
+    State.wizard.step--;
+    this.showStep(State.wizard.step);
+  },
+
+  showStep(n) {
+    document.querySelectorAll('.wizard-step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+    this.renderProgress();
+    window.scrollTo(0, 0);
+  },
+
+  readStep1() {
+    State.wizard.session.readiness = {
+      badSleep: State.wizard.session.readiness.badSleep || false,
+      legFreshness: parseInt(document.getElementById('r-legfresh').value),
+      generalFreshness: parseInt(document.getElementById('r-genfresh').value),
+      energy: parseInt(document.getElementById('r-energy').value),
+      notes: document.getElementById('r-notes').value
+    };
+  },
+
+  readStep2() {
+    State.wizard.session.sprint = State.wizard.session.sprint || {};
+    Object.assign(State.wizard.session.sprint, {
+      build: parseInt(document.getElementById('s-build').value) || 30,
+      fly: parseInt(document.getElementById('s-fly').value) || 15,
+      floorReps: parseInt(document.getElementById('s-floor').value) || 3,
+      ceilingReps: parseInt(document.getElementById('s-ceiling').value) || 6,
+      notes: document.getElementById('s-notes').value
+    });
+  },
+
+  readStep3() {
+    const cards = document.querySelectorAll('.rep-card');
+    const reps = [];
+    cards.forEach((card, idx) => {
+      const get = id => parseInt(document.getElementById(id)?.value || '7');
+      const base = 'rep' + (idx + 1) + '-';
+      reps.push({
+        repNum: idx + 1,
+        quality: get(base + 'quality'),
+        ease: get(base + 'ease'),
+        rhythm: get(base + 'rhythm'),
+        confidence: get(base + 'confidence'),
+        notes: document.getElementById(base + 'notes')?.value || ''
+      });
+    });
+    State.wizard.session.sprint.reps = reps;
+    State.wizard.session.sprint.stopTriggered = State.wizard.stopTriggered;
+  },
+
+  readStep4() {
+    const rows = document.querySelectorAll('#lift-rows-container .lift-row');
+    const exercises = [];
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll('input[type="text"], input[type="number"]');
+      const rpeRange = row.querySelector('input[type="range"]');
+      exercises.push({
+        name: inputs[0]?.value || '',
+        sets: parseInt(inputs[1]?.value) || 0,
+        reps: parseInt(inputs[2]?.value) || 0,
+        load: inputs[3]?.value || '',
+        rpe: parseInt(rpeRange?.value) || 7,
+        notes: ''
+      });
+    });
+    State.wizard.session.lift = {
+      verdict: document.getElementById('lift-verdict').value,
+      exercises,
+      notes: document.getElementById('l-notes').value
+    };
+  },
+
+  addRepCard() {
+    if (State.wizard.stopTriggered) return;
+    const ceiling = parseInt(document.getElementById('s-ceiling').value) || 6;
+    if (State.wizard.repCount >= ceiling) return;
+    State.wizard.repCount++;
+    const n = State.wizard.repCount;
+    const base = 'rep' + n + '-';
+    const container = document.getElementById('rep-cards-container');
+    const div = document.createElement('div');
+    div.className = 'rep-card';
+    div.id = 'rep-card-' + n;
+    div.innerHTML = `
+      <div class="rep-card-header">
+        <span class="rep-number">Rep ${n}</span>
+        <button class="rep-delete" onclick="Wizard.deleteRep(${n})" title="Remove rep">×</button>
+      </div>
+      <div class="rep-sliders">
+        ${this.sliderHTMLCompact(base + 'quality', 'Quality', 7)}
+        ${this.sliderHTMLCompact(base + 'ease', 'Ease', 7)}
+        ${this.sliderHTMLCompact(base + 'rhythm', 'Rhythm', 7)}
+        ${this.sliderHTMLCompact(base + 'confidence', 'Confidence', 7)}
+      </div>
+      <div style="margin-top:4px;">
+        <input type="text" id="${base}notes" placeholder="Rep notes (optional)" style="font-size:14px;min-height:36px;">
+      </div>`;
+    container.appendChild(div);
+    this.updateRepCounter();
+    // Hide add rep at ceiling
+    const addBtn = document.getElementById('btn-add-rep');
+    if (State.wizard.repCount >= ceiling) addBtn.style.display = 'none';
+    // Scroll to new rep
+    setTimeout(() => div.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  },
+
+  deleteRep(n) {
+    const el = document.getElementById('rep-card-' + n);
+    if (el) el.remove();
+    State.wizard.repCount = Math.max(0, State.wizard.repCount - 1);
+    // Renumber remaining
+    const cards = document.querySelectorAll('.rep-card');
+    cards.forEach((card, idx) => {
+      const num = idx + 1;
+      const oldNum = card.id.replace('rep-card-', '');
+      card.id = 'rep-card-' + num;
+      card.querySelector('.rep-number').textContent = 'Rep ' + num;
+      // Rename slider IDs
+      card.querySelectorAll('[id^="rep"]').forEach(el => {
+        el.id = el.id.replace('rep' + oldNum + '-', 'rep' + num + '-');
+        const val = document.getElementById(el.id + '-val');
+        // oninput references old ID — simplest fix is to re-assign
+        if (el.type === 'range') {
+          const newId = el.id;
+          el.oninput = function() { const v = document.getElementById(newId + '-val'); if(v) v.textContent = this.value + ' / 10'; };
+        }
+      });
+      card.querySelectorAll('[for^="rep"]').forEach(el => {
+        el.htmlFor = el.htmlFor.replace('rep' + oldNum + '-', 'rep' + num + '-');
+      });
+    });
+    this.updateRepCounter();
+    document.getElementById('btn-add-rep').style.display = '';
+  },
+
+  updateRepCounter() {
+    const ceiling = parseInt(document.getElementById('s-ceiling')?.value) || 6;
+    const floor = parseInt(document.getElementById('s-floor')?.value) || 3;
+    const n = State.wizard.repCount;
+    let msg = `${n} rep${n !== 1 ? 's' : ''} logged`;
+    if (n < floor) msg += ` · need ${floor - n} more for floor`;
+    else if (n < ceiling) msg += ` · ${ceiling - n} more to ceiling`;
+    else msg += ' · at ceiling';
+    const el = document.getElementById('rep-counter');
+    if (el) el.textContent = msg;
+  },
+
+  triggerStop() {
+    this.readStep3();
+    State.wizard.stopTriggered = true;
+    State.wizard.session.sprint.stopTriggered = true;
+    const btn = document.getElementById('btn-stop');
+    btn.disabled = true;
+    btn.textContent = 'Session Stopped';
+    document.getElementById('stop-status').style.display = 'block';
+    document.getElementById('btn-add-rep').style.display = 'none';
+  },
+
+  submitSession() {
+    this.readStep4();
+    const sumBest = document.getElementById('sum-best').value;
+    const sumBreak = document.getElementById('sum-break').value;
+    const sumNotes = document.getElementById('sum-notes').value;
+    State.wizard.session.summary = { bestPart: sumBest, breakdownPoint: sumBreak, notes: sumNotes };
+
+    const session = {
+      id: Utils.uuid(),
+      date: new Date().toISOString(),
+      dayType: State.wizard.session.dayType,
+      readiness: State.wizard.session.readiness,
+      sprint: State.wizard.session.sprint,
+      lift: State.wizard.session.lift,
+      summary: State.wizard.session.summary
+    };
+
+    session.analysis = Analyzer.analyzeSession(session, State.sessions);
+    State.sessions.push(session);
+
+    // Auto-generate next plan
+    State.nextPlan = Plan.generatePlan(session, State.sessions);
+    Storage.save();
+
+    // Reset wizard
+    State.wizard.step = 1;
+    State.wizard.session = { readiness: {}, sprint: { reps: [] }, lift: { exercises: [] }, summary: {} };
+    State.wizard.stopTriggered = false;
+    State.wizard.repCount = 0;
+    this.init();
+    this.showStep(1);
+
+    // Go to analyzer
+    Nav.goTo('analyzer');
+    alert('Session saved! Check the Analyze tab.');
+  }
+};
+
+// Helper called from inline HTML
+function setSleep(val) {
+  State.wizard.session.readiness = State.wizard.session.readiness || {};
+  State.wizard.session.readiness.badSleep = val;
+  document.getElementById('sleep-no').classList.toggle('active', !val);
+  document.getElementById('sleep-yes').classList.toggle('active', val);
+}
+function setDayType(dt) {
+  State.wizard.session.dayType = dt;
+  document.getElementById('day1-btn').classList.toggle('active', dt === 'day1');
+  document.getElementById('day2-btn').classList.toggle('active', dt === 'day2');
+}
+
+// ═══════════════════════════════════════════════════════
+// ANALYZER TAB
+// ═══════════════════════════════════════════════════════
+const AnalyzerTab = {
+  render() {
+    const sel = document.getElementById('analyzer-session-select');
+    const sessions = [...State.sessions].reverse();
+    sel.innerHTML = sessions.length
+      ? sessions.map((s, i) => `<option value="${s.id}">${Utils.fmtDate(s.date)} — ${s.dayType === 'day1' ? 'Day 1' : 'Day 2'}${s.analysis ? ' (' + s.analysis.sessionVerdict + ')' : ''}</option>`).join('')
+      : '<option>No sessions yet</option>';
+    if (sessions.length) this.renderResults(sessions[0]);
+  },
+
+  onSelect() {
+    const id = document.getElementById('analyzer-session-select').value;
+    const session = State.sessions.find(s => s.id === id);
+    if (session) this.renderResults(session);
+  },
+
+  verdictBadge(v) {
+    const map = { strong: 'green', acceptable: 'amber', degraded: 'red', abort: 'red' };
+    return `<span class="badge badge-${map[v] || 'muted'}">${v}</span>`;
+  },
+  doseBadge(d) {
+    const map = { good: 'green', low: 'yellow', high: 'red', supportive: 'green', neutral: 'muted', risk: 'red' };
+    return `<span class="badge badge-${map[d] || 'muted'}">${d}</span>`;
+  },
+  issueBadge(i) {
+    const map = { none: 'muted', fatigue: 'yellow', coordination: 'blue', force: 'red', lift_interference: 'red', exposure: 'amber' };
+    return `<span class="badge badge-${map[i] || 'muted'}">${i.replace('_', ' ')}</span>`;
+  },
+  decisionBadge(d) {
+    const map = { hold: 'yellow', progress_reps: 'green', progress_fly: 'green', regress_reps: 'red', regress_fly: 'red' };
+    return `<span class="badge badge-${map[d] || 'muted'}">${d.replace('_', ' ')}</span>`;
+  },
+
+  renderResults(session) {
+    const container = document.getElementById('analysis-results');
+    if (!session.analysis) {
+      session.analysis = Analyzer.analyzeSession(session, State.sessions.filter(s => s.date < session.date));
+    }
+    const a = session.analysis;
+    const reps = session.sprint.reps || [];
+    const qualAvg = a.qualAvg || 0;
+    const easeAvg = a.easeAvg || 0;
+
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-title accent">Session Verdict</div>
+        <div class="analysis-row"><span class="analysis-label">Verdict</span>${this.verdictBadge(a.sessionVerdict)}</div>
+        <div class="analysis-row"><span class="analysis-label">Sprint Dose</span>${this.doseBadge(a.sprintDose)}</div>
+        <div class="analysis-row"><span class="analysis-label">Lift Dose</span>${this.doseBadge(a.liftDose)}</div>
+        <div class="analysis-row"><span class="analysis-label">Issue Type</span>${this.issueBadge(a.issueType)}</div>
+        <div class="analysis-row"><span class="analysis-label">Decision</span>${this.decisionBadge(a.progressionDecision)}</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Metrics</div>
+        <div class="analysis-row"><span class="analysis-label">Readiness Score</span><span style="font-weight:700;color:var(--text);">${a.readinessScore}/10${session.readiness.badSleep ? ' ⚠' : ''}</span></div>
+        <div class="analysis-row"><span class="analysis-label">Quality Avg</span><span style="font-weight:700;color:var(--text);">${qualAvg}/10</span></div>
+        <div class="analysis-row"><span class="analysis-label">Ease Avg</span><span style="font-weight:700;color:var(--text);">${easeAvg}/10</span></div>
+        <div class="analysis-row"><span class="analysis-label">Consistency</span><span style="font-weight:700;color:var(--text);">${Math.round(a.sessionConsistency * 100)}%</span></div>
+        <div class="analysis-row"><span class="analysis-label">Reps</span><span style="font-weight:700;color:var(--text);">${reps.length} / ${session.sprint.ceilingReps}${session.sprint.stopTriggered ? ' ⛔' : ''}</span></div>
+        <div class="analysis-row"><span class="analysis-label">Fly</span><span style="font-weight:700;color:var(--text);">${session.sprint.fly}m fly / ${session.sprint.build}m build</span></div>
+      </div>
+
+      ${reps.length > 0 ? `
+      <div class="card">
+        <div class="card-title">Rep Breakdown</div>
+        ${reps.map(r => `
+          <div class="analysis-row">
+            <span class="analysis-label">Rep ${r.repNum}</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+              <span class="badge badge-muted" style="font-size:11px;">Q:${r.quality}</span>
+              <span class="badge badge-muted" style="font-size:11px;">E:${r.ease}</span>
+              <span class="badge badge-muted" style="font-size:11px;">R:${r.rhythm}</span>
+              <span class="badge badge-muted" style="font-size:11px;">C:${r.confidence}</span>
+            </div>
+          </div>
+          ${r.notes ? `<div style="font-size:12px;color:var(--text-dim);padding:0 0 8px;">${r.notes}</div>` : ''}
+        `).join('')}
+      </div>` : ''}
+
+      <div class="card">
+        <div class="card-title">Explanation</div>
+        <div class="analysis-explanation">${Analyzer.explanationText(a, session)}</div>
+      </div>`;
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// PLAN TAB
+// ═══════════════════════════════════════════════════════
+const Plan = {
+  ACCESSORY_LIBRARY: {
+    day1: [
+      { name: 'Single-leg Drop Landing', sets: 3, reps: 4, load: 'BW' },
+      { name: 'Ankle Pogos', sets: 2, reps: 6, load: 'BW' },
+      { name: 'Hip Thrust', sets: 3, reps: 6, load: '' },
+      { name: 'Box Jump', sets: 3, reps: 3, load: 'BW' },
+      { name: 'A-Skip', sets: 3, reps: 10, load: 'BW' }
+    ],
+    day2: [
+      { name: 'Nordic Curl', sets: 3, reps: 4, load: 'BW' },
+      { name: 'Leg Curl', sets: 3, reps: 8, load: '' },
+      { name: 'Copenhagen Hold', sets: 2, reps: 0, load: 'BW' },
+      { name: 'Hip Flexor March', sets: 3, reps: 8, load: 'BW' },
+      { name: 'Calf Raise', sets: 3, reps: 10, load: '' }
+    ]
+  },
+
+  generatePlan(session, allSessions) {
+    const a = session.analysis;
+    const sprint = session.sprint;
+    const reasons = {};
+
+    // Priority 1: Sprint reps/fly
+    let suggestedReps = sprint.ceilingReps;
+    let suggestedFly = sprint.fly;
+    let suggestedBuild = sprint.build;
+    let suggestedFloor = sprint.floorReps;
+
+    if (a.progressionDecision === 'regress_reps') {
+      suggestedReps = sprint.floorReps;
+      reasons.reps = `Regress → floor reps. ${session.sprint.stopTriggered ? 'Stop was triggered.' : 'Session degraded.'}`;
+    } else if (a.progressionDecision === 'regress_fly') {
+      suggestedFly = Math.max(10, sprint.fly - 5);
+      suggestedReps = sprint.floorReps;
+      reasons.fly = `Regress fly by 5m. Two consecutive degraded sessions with force pattern.`;
+      reasons.reps = `Reset reps to floor after fly regression.`;
+    } else if (a.progressionDecision === 'progress_reps') {
+      suggestedReps = Math.min(6, sprint.ceilingReps + 1);
+      reasons.reps = `Progress → add 1 rep. Two consecutive strong sessions at ceiling.`;
+    } else if (a.progressionDecision === 'progress_fly') {
+      suggestedFly = Math.min(25, sprint.fly + 5);
+      suggestedReps = sprint.floorReps;
+      reasons.fly = `Progress fly by 5m. Ceiling reps maxed at 6 for 2 sessions.`;
+      reasons.reps = `Reset reps to floor for new fly distance.`;
+    } else {
+      reasons.reps = `Hold — need 2 consecutive strong sessions to progress.`;
+      reasons.fly = `Hold — same fly distance.`;
+    }
+
+    // Priority 2: Lift volume
+    let liftVolumeNote = '';
+    let reduceSets = false;
+    if (a.liftDose === 'risk') {
+      reduceSets = true;
+      liftVolumeNote = 'Reduce main lift sets by 1 — lift was heavy relative to sprint outcome.';
+    } else if (a.issueType === 'lift_interference') {
+      liftVolumeNote = 'Reduce accessory volume — lift interference pattern detected on Day 2.';
+    } else {
+      liftVolumeNote = 'Maintain lift volume.';
+    }
+
+    // Priority 3: Accessories
+    let accessoryNote = '';
+    if (a.issueType === 'coordination') accessoryNote = 'Add A-skip primer before working reps.';
+    else if (a.issueType === 'force') accessoryNote = 'Emphasise drop landings — force/stiffness issue detected.';
+
+    // Build suggested exercises from last session
+    const lastExercises = JSON.parse(JSON.stringify(session.lift.exercises || []));
+    if (reduceSets) {
+      lastExercises.forEach(ex => {
+        if (['Back Squat', 'Front Squat', 'RDL', 'Deadlift'].includes(ex.name)) {
+          ex.sets = Math.max(2, (ex.sets || 3) - 1);
+        }
+      });
+    }
+
+    // Determine next day type
+    const nextDayType = session.dayType === 'day1' ? 'day2' : 'day1';
+
+    return {
+      dayType: nextDayType,
+      fly: suggestedFly,
+      build: suggestedBuild,
+      floorReps: suggestedFloor,
+      ceilingReps: suggestedReps,
+      exercises: lastExercises,
+      reasons,
+      liftVolumeNote,
+      accessoryNote,
+      progressionDecision: a.progressionDecision,
+      basedOnSessionId: session.id,
+      basedOnSessionDate: session.date,
+      overrides: {}
+    };
+  },
+
+  render() {
+    const container = document.getElementById('plan-display');
+    if (!State.nextPlan) {
+      // Generate from most recent session if available
+      if (State.sessions.length > 0) {
+        const last = State.sessions[State.sessions.length - 1];
+        if (!last.analysis) last.analysis = Analyzer.analyzeSession(last, State.sessions.slice(0, -1));
+        State.nextPlan = this.generatePlan(last, State.sessions);
+        Storage.save();
+      } else {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon">→</div><div>Log a session to generate your next plan.</div></div>';
+        return;
+      }
+    }
+
+    const p = State.nextPlan;
+    const ov = p.overrides || {};
+
+    container.innerHTML = `
+      <div class="card">
+        <div class="card-title">Based on <span style="color:var(--text)">${Utils.fmtDate(p.basedOnSessionDate)}</span></div>
+        <div class="analysis-row">
+          <span class="analysis-label">Decision</span>
+          <span class="badge badge-${['progress_reps','progress_fly'].includes(p.progressionDecision) ? 'green' : p.progressionDecision === 'hold' ? 'yellow' : 'red'}">${(p.progressionDecision||'hold').replace('_',' ')}</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title accent">Next Session Suggestion</div>
+        <div class="plan-field">
+          <div>
+            <div class="plan-field-label">Day Type</div>
+          </div>
+          <div class="plan-field-val">${p.dayType === 'day1' ? 'Day 1' : 'Day 2'}</div>
+        </div>
+        <div class="plan-field">
+          <div>
+            <div class="plan-field-label">Fly Distance</div>
+            <div class="plan-reason">${p.reasons.fly || ''}</div>
+          </div>
+          <div class="plan-field-val">${ov.fly !== undefined ? ov.fly : p.fly}m</div>
+        </div>
+        <div class="plan-field">
+          <div>
+            <div class="plan-field-label">Build Distance</div>
+          </div>
+          <div class="plan-field-val">${ov.build !== undefined ? ov.build : p.build}m</div>
+        </div>
+        <div class="plan-field">
+          <div>
+            <div class="plan-field-label">Rep Ceiling</div>
+            <div class="plan-reason">${p.reasons.reps || ''}</div>
+          </div>
+          <div class="plan-field-val">${ov.ceilingReps !== undefined ? ov.ceilingReps : p.ceilingReps} reps</div>
+        </div>
+        <div class="plan-field">
+          <div>
+            <div class="plan-field-label">Rep Floor</div>
+          </div>
+          <div class="plan-field-val">${ov.floorReps !== undefined ? ov.floorReps : p.floorReps} reps</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Lift Guidance</div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">${p.liftVolumeNote}</div>
+        ${p.accessoryNote ? `<div style="font-size:13px;color:var(--accent);">${p.accessoryNote}</div>` : ''}
+        <div class="divider"></div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Planned exercises</div>
+        ${(p.exercises || []).map(ex => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);">
+            <span style="font-size:13px;">${ex.name}</span>
+            <span style="font-size:12px;color:var(--text-muted);">${ex.sets}×${ex.reps || '—'}${ex.load ? ' · '+ex.load : ''}</span>
+          </div>`).join('')}
+      </div>
+
+      <div class="card">
+        <div class="card-title">Manual Override</div>
+        <div class="plan-override">
+          <div>
+            <label>Fly (m)</label>
+            <input type="number" id="ov-fly" value="${ov.fly !== undefined ? ov.fly : p.fly}" min="10" max="30">
+          </div>
+          <div>
+            <label>Build (m)</label>
+            <input type="number" id="ov-build" value="${ov.build !== undefined ? ov.build : p.build}" min="15" max="40">
+          </div>
+          <div>
+            <label>Floor reps</label>
+            <input type="number" id="ov-floor" value="${ov.floorReps !== undefined ? ov.floorReps : p.floorReps}" min="1" max="8">
+          </div>
+          <div>
+            <label>Ceiling reps</label>
+            <input type="number" id="ov-ceiling" value="${ov.ceilingReps !== undefined ? ov.ceilingReps : p.ceilingReps}" min="1" max="8">
+          </div>
+        </div>
+        <div class="field">
+          <label>Override comment</label>
+          <textarea id="ov-comment" rows="2" placeholder="Why you changed it…">${ov.comment || ''}</textarea>
+        </div>
+        <button class="btn btn-primary" onclick="Plan.saveOverrides()">Save Plan →</button>
+      </div>`;
+  },
+
+  saveOverrides() {
+    if (!State.nextPlan) return;
+    State.nextPlan.overrides = {
+      fly: parseInt(document.getElementById('ov-fly').value),
+      build: parseInt(document.getElementById('ov-build').value),
+      floorReps: parseInt(document.getElementById('ov-floor').value),
+      ceilingReps: parseInt(document.getElementById('ov-ceiling').value),
+      comment: document.getElementById('ov-comment').value
+    };
+    // Apply overrides to top-level plan fields for Step 2 pre-fill
+    Object.assign(State.nextPlan, State.nextPlan.overrides);
+    Storage.save();
+    this.render();
+    alert('Plan saved. It will pre-fill your next Log session.');
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════
+const History = {
+  render() {
+    const sessions = State.sessions.slice(-5);
+    this.renderChart(sessions);
+    this.renderCards(sessions.slice().reverse());
+  },
+
+  renderChart(sessions) {
+    const canvas = document.getElementById('trend-chart');
+    if (!canvas) return;
+    const dpr = window.devicePixelRatio || 1;
+    const w = canvas.offsetWidth;
+    const h = 180;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+
+    if (sessions.length < 1) {
+      ctx.fillStyle = '#555';
+      ctx.font = '13px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('No sessions yet', w / 2, h / 2);
+      return;
+    }
+    if (sessions.length < 2) {
+      ctx.fillStyle = '#555';
+      ctx.font = '13px system-ui';
+      ctx.textAlign = 'center';
+      ctx.fillText('Need more sessions for trend', w / 2, h / 2);
+      return;
+    }
+
+    const ml = 32, mr = 16, mt = 16, mb = 36;
+    const cw = w - ml - mr, ch = h - mt - mb;
+
+    const toX = i => ml + (i / (sessions.length - 1)) * cw;
+    const toY = v => mt + ch - ((v - 1) / 9) * ch;
+
+    // Gridlines
+    ctx.strokeStyle = '#2e2e2e';
+    ctx.lineWidth = 1;
+    [5, 7].forEach(y => {
+      ctx.beginPath();
+      ctx.moveTo(ml, toY(y));
+      ctx.lineTo(ml + cw, toY(y));
+      ctx.stroke();
+    });
+
+    // Y axis labels
+    ctx.fillStyle = '#555';
+    ctx.font = '10px system-ui';
+    ctx.textAlign = 'right';
+    [1, 5, 7, 10].forEach(v => {
+      ctx.fillText(v, ml - 4, toY(v) + 3);
+    });
+
+    // X labels
+    ctx.textAlign = 'center';
+    sessions.forEach((s, i) => {
+      ctx.fillStyle = '#555';
+      ctx.font = '10px system-ui';
+      ctx.fillText(Utils.fmtDateShort(s.date), toX(i), h - 8);
+    });
+
+    // Draw line
+    const drawLine = (data, color, dotColor) => {
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+      ctx.lineJoin = 'round';
+      data.forEach((v, i) => {
+        const x = toX(i), y = toY(v);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      data.forEach((v, i) => {
+        ctx.beginPath();
+        ctx.fillStyle = dotColor || color;
+        ctx.arc(toX(i), toY(v), 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    };
+
+    const qualData = sessions.map(s => s.analysis ? s.analysis.qualAvg : Utils.avg((s.sprint.reps || []).map(r => r.quality)));
+    const easeData = sessions.map(s => s.analysis ? s.analysis.easeAvg : Utils.avg((s.sprint.reps || []).map(r => r.ease)));
+    const consistData = sessions.map(s => {
+      const c = s.analysis ? s.analysis.sessionConsistency : 0.7;
+      return 1 + c * 9; // scale 0–1 → 1–10
+    });
+
+    drawLine(easeData, '#aaaaaa');
+    drawLine(qualData, '#f59e0b');
+    drawLine(consistData, '#38bdf8');
+
+    // Trend arrows
+    const qualSlope = Utils.slope(qualData);
+    const consistSlope = Utils.slope(consistData);
+    ctx.font = 'bold 13px system-ui';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = qualSlope > 0.1 ? '#22c55e' : qualSlope < -0.1 ? '#ef4444' : '#888';
+    ctx.fillText(qualSlope > 0.1 ? '↑' : qualSlope < -0.1 ? '↓' : '→', ml + cw + 4, toY(qualData[qualData.length - 1]) + 4);
+    ctx.fillStyle = consistSlope > 0.1 ? '#22c55e' : consistSlope < -0.1 ? '#ef4444' : '#888';
+    ctx.fillText(consistSlope > 0.1 ? '↑' : consistSlope < -0.1 ? '↓' : '→', ml + cw + 4, toY(consistData[consistData.length - 1]) + 4);
+  },
+
+  renderCards(sessions) {
+    const container = document.getElementById('session-cards');
+    if (!sessions.length) {
+      container.innerHTML = '<div class="empty-state"><div class="empty-icon">≋</div><div>No sessions yet. Log your first session!</div></div>';
+      return;
+    }
+    container.innerHTML = sessions.map(s => this.sessionCardHTML(s)).join('');
+  },
+
+  sessionCardHTML(s) {
+    const a = s.analysis || {};
+    const reps = s.sprint.reps || [];
+    const badgeMap = { strong: 'green', acceptable: 'amber', degraded: 'red', abort: 'red' };
+    const vBadge = a.sessionVerdict ? `<span class="badge badge-${badgeMap[a.sessionVerdict] || 'muted'}">${a.sessionVerdict}</span>` : '';
+    return `
+      <div class="session-card">
+        <div class="session-card-header" onclick="History.toggleCard('${s.id}')">
+          <div>
+            <div style="font-size:14px;font-weight:700;">${Utils.fmtDate(s.date)} &middot; ${s.dayType === 'day1' ? 'Day 1' : 'Day 2'}</div>
+            <div class="session-card-meta">${s.sprint.fly}m fly / ${s.sprint.build}m build &middot; ${reps.length} reps${s.sprint.stopTriggered ? ' ⛔' : ''}</div>
+          </div>
+          ${vBadge}
+        </div>
+        <div class="session-card-body" id="card-body-${s.id}">
+          <div class="session-stat-row">
+            <div class="session-stat"><strong>${a.qualAvg || '—'}</strong>Quality avg</div>
+            <div class="session-stat"><strong>${a.easeAvg || '—'}</strong>Ease avg</div>
+            <div class="session-stat"><strong>${a.sessionConsistency !== undefined ? Math.round(a.sessionConsistency*100)+'%' : '—'}</strong>Consistency</div>
+            <div class="session-stat"><strong>${a.readinessScore || '—'}</strong>Readiness</div>
+          </div>
+          ${reps.length > 0 ? `
+          <div style="margin-top:12px;">
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Reps</div>
+            ${reps.map(r => `<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);font-size:12px;"><span style="color:var(--text-muted);">Rep ${r.repNum}</span><span>Q:${r.quality} E:${r.ease} R:${r.rhythm} C:${r.confidence}</span></div>`).join('')}
+          </div>` : ''}
+          ${s.summary && s.summary.bestPart ? `<div style="margin-top:10px;font-size:13px;color:var(--text-muted);"><strong style="color:var(--text);">Best:</strong> ${s.summary.bestPart}</div>` : ''}
+          ${s.summary && s.summary.breakdownPoint ? `<div style="font-size:13px;color:var(--text-muted);margin-top:4px;"><strong style="color:var(--text);">Breakdown:</strong> ${s.summary.breakdownPoint}</div>` : ''}
+          ${a.progressionDecision ? `<div style="margin-top:10px;"><span class="badge badge-${['progress_reps','progress_fly'].includes(a.progressionDecision)?'green':a.progressionDecision==='hold'?'yellow':'red'}">${a.progressionDecision.replace('_',' ')}</span></div>` : ''}
+        </div>
+      </div>`;
+  },
+
+  toggleCard(id) {
+    const body = document.getElementById('card-body-' + id);
+    if (body) body.classList.toggle('open');
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// RULES
+// ═══════════════════════════════════════════════════════
+const Rules = {
+  rendered: false,
+  render() {
+    if (this.rendered) return;
+    this.rendered = true;
+    document.getElementById('rules-content').innerHTML = `
+      ${this.section('Progression Rules', [
+        '<strong>Add reps:</strong> Last 2 sessions verdict = strong (quality avg ≥7.5, ease avg ≥7, consistency ≥70%) at ceiling reps → +1 rep next session (cap 6).',
+        '<strong>Extend fly (15m→20m):</strong> Reps maxed at 6 for 2 consecutive strong sessions → fly +5m, reps reset to floor.',
+        '<strong>Extend fly (20m→25m):</strong> Same criteria satisfied at 20m fly for 2 sessions.',
+        '<strong>Never change reps AND fly in same plan</strong> — one variable at a time only.',
+        '<strong>After fly increase:</strong> Reps reset to floor (3). Do not re-add reps until quality holds at new fly distance.',
+        '<strong>Hold default:</strong> When in doubt, hold. Prefer stability over premature progression.'
+      ])}
+      ${this.section('Stop Rules', [
+        '<strong>Stop immediately when:</strong> Forced/muscular feel — rep does not feel elastic or reflexive.',
+        '<strong>Stop immediately when:</strong> GCT visibly lengthening — heavier contact, less bounce.',
+        '<strong>Stop immediately when:</strong> Posture breaks — forward lean, pelvic tilt, neck tension.',
+        '<strong>Stop immediately when:</strong> Quality < 5 OR ease < 5 on any rep.',
+        '<strong>Stop immediately when:</strong> Rhythm variance > 2 pts between first and last rep.',
+        '<strong>Warning (do not add reps):</strong> Ease drops >2 pts from Rep 1. Quality 6.5–7.5 range. Rhythm variance 1–2 pts.',
+        '<strong>Next session after stop:</strong> Regress to floor reps. Do not attempt ceiling until 2 clean sessions.'
+      ])}
+      ${this.cuesSection()}
+      ${this.issueGuide()}`
+    ;
+    document.querySelectorAll('.collapsible-header').forEach(h => {
+      h.addEventListener('click', () => {
+        const body = document.getElementById(h.dataset.target);
+        if (body) {
+          body.classList.toggle('open');
+          h.classList.toggle('open');
+        }
+      });
+    });
+  },
+
+  section(title, items) {
+    const id = 'rules-' + title.replace(/\s/g, '-').toLowerCase();
+    return `
+      <div class="collapsible-section">
+        <div class="collapsible-header" data-target="${id}">${title}<span class="chevron">▼</span></div>
+        <div class="collapsible-body" id="${id}">
+          <ul class="rules-list">${items.map(i => `<li>${i}</li>`).join('')}</ul>
+        </div>
+      </div>`;
+  },
+
+  cuesSection() {
+    const id = 'rules-cues';
+    return `
+      <div class="collapsible-section">
+        <div class="collapsible-header" data-target="${id}">Sprint Cues<span class="chevron">▼</span></div>
+        <div class="collapsible-body" id="${id}">
+          <div class="cue-item">"Land under you"</div>
+          <div class="cue-item">"Stay tall"</div>
+          <div class="cue-item">"Let the ground push you up"</div>
+          <div class="cue-item">"Elastic, not muscular"</div>
+          <div class="cue-item">"Quick feet — don't grab the ground"</div>
+        </div>
+      </div>`;
+  },
+
+  issueGuide() {
+    const id = 'rules-issues';
+    const issues = [
+      { name: 'Force / Stiffness', color: 'var(--accent-red)', desc: 'Low ease from Rep 1, muscular/effortful feel, GCT lengthening. Action: reduce to floor reps, add single-leg drop landings, extend recovery.' },
+      { name: 'Coordination', color: 'var(--accent-blue)', desc: 'Rhythm lags quality, braking sensation, foot landing in front of hip. Action: reduce fly to 10m, add A-skip primer, use "land under you" cue.' },
+      { name: 'Fatigue', color: 'var(--accent-yellow)', desc: 'Quality trending downward across session (trend slope < -0.4, drop from best ≥2 pts). Not a rep 1 issue. Action: reduce total reps, check recovery.' },
+      { name: 'Lift Interference', color: 'var(--accent-red)', desc: 'Fatigue pattern appears specifically on Day 2 with heavy lift. Action: reduce accessory volume, check Day 1→Day 2 recovery window.' },
+      { name: 'Exposure', color: 'var(--accent)', desc: 'Quality is acceptable or strong but not improving across 3+ sessions at same fly/rep parameters. Action: progress fly distance.' }
+    ];
+    return `
+      <div class="collapsible-section">
+        <div class="collapsible-header" data-target="${id}">Issue Guide<span class="chevron">▼</span></div>
+        <div class="collapsible-body" id="${id}">
+          ${issues.map(iss => `
+            <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+              <div style="font-size:13px;font-weight:700;color:${iss.color};margin-bottom:4px;">${iss.name}</div>
+              <div style="font-size:12px;color:var(--text-muted);line-height:1.6;">${iss.desc}</div>
+            </div>`).join('')}
+        </div>
+      </div>`;
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// APP INIT
+// ═══════════════════════════════════════════════════════
+const App = {
+  init() {
+    Storage.load();
+    Wizard.init();
+    document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+  },
+  refresh() {
+    if (State.activeTab === 'analyzer') AnalyzerTab.render();
+    else if (State.activeTab === 'plan') PlanTab.render();
+    else if (State.activeTab === 'history') History.render();
+  }
+};
+
+// PlanTab alias
+const PlanTab = Plan;
+
+// Guard against leaving mid-session
+window.addEventListener('beforeunload', e => {
+  if (State.wizard.repCount > 0 || State.wizard.step > 2) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+
+App.init();
+</script>
+</body>
+</html>
