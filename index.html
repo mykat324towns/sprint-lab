@@ -430,6 +430,7 @@ input[type="range"] {
 .badge-amber { background: var(--accent-dim); color: var(--accent); }
 .badge-blue { background: var(--accent-blue-dim); color: var(--accent-blue); }
 .badge-muted { background: #2a2a2a; color: var(--text-muted); }
+.feel-btn.active { background: var(--accent) !important; color: #000 !important; border-color: var(--accent) !important; }
 
 /* ── ANALYSIS RESULTS ── */
 .analysis-row {
@@ -624,6 +625,94 @@ input[type="range"] {
 .inline-row { display: flex; gap: 10px; }
 .inline-row .field { flex: 1; }
 
+/* step 4 prescription reference card */
+.rx-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 12px;
+}
+.rx-card-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 10px;
+}
+.rx-section-label {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 10px 0 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.rx-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.rx-row:last-child { border-bottom: none; }
+.rx-row-name { flex: 1; }
+.rx-row-val {
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.rx-row-rpe {
+  font-size: 12px;
+  color: var(--accent);
+  margin-left: 8px;
+  white-space: nowrap;
+}
+.rx-loading {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.rx-cue {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* accessory prescription block */
+.acc-rx-block {
+  background: var(--bg-card2);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  padding: 10px 12px;
+  margin: 0 0 4px 0;
+  font-size: 13px;
+}
+.acc-rx-title {
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.acc-rx-numbers {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.01em;
+  margin-bottom: 6px;
+}
+.acc-rx-cue {
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.acc-rx-reason {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 /* accessory swap select */
 .accessory-row {
   display: flex;
@@ -641,6 +730,69 @@ input[type="range"] {
   width: auto;
   min-width: 140px;
 }
+
+/* ── AI ASSIST ── */
+.ai-toggle-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.ai-toggle-pill.on {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  background: var(--accent-blue-dim);
+}
+.ai-toggle-pill .ai-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  transition: background 0.15s;
+}
+.ai-toggle-pill.on .ai-dot { background: var(--accent-blue); }
+
+.ai-block {
+  margin-top: 10px;
+  background: var(--bg-card2);
+  border: 1px solid var(--accent-blue-dim);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.ai-block-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-blue);
+}
+.ai-block-header .ai-chevron { font-size: 10px; transition: transform 0.2s; }
+.ai-block-header.open .ai-chevron { transform: rotate(180deg); }
+.ai-block-body {
+  display: none;
+  padding: 10px 12px;
+  border-top: 1px solid var(--accent-blue-dim);
+}
+.ai-block-body.open { display: block; }
+.ai-badge-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.ai-summary { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+.ai-loading { font-size: 12px; color: var(--accent-blue); padding: 8px 12px; opacity: 0.7; }
+.ai-error { font-size: 12px; color: var(--text-dim); padding: 8px 12px; font-style: italic; }
 </style>
 </head>
 <body>
@@ -649,6 +801,9 @@ input[type="range"] {
   <div style="position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
     <div style="font-size:17px;font-weight:800;letter-spacing:-0.03em;">SPRINT <span style="color:var(--accent)">LAB</span></div>
     <div id="top-date" style="font-size:12px;color:var(--text-muted);"></div>
+    <button class="ai-toggle-pill" id="ai-toggle" onclick="AIAssist.toggleEnabled()" title="Toggle AI Assist">
+      <span class="ai-dot"></span>AI
+    </button>
   </div>
 
   <!-- ── LOG TAB ── -->
@@ -680,6 +835,8 @@ input[type="range"] {
           <textarea id="r-notes" placeholder="Any context…" rows="2"></textarea>
         </div>
       </div>
+
+      <div id="ai-pre-session" style="display:none;"></div>
 
       <div class="wizard-nav">
         <button class="btn btn-primary" onclick="Wizard.goNext()">Next →</button>
@@ -749,6 +906,7 @@ input[type="range"] {
       <div class="stop-zone">
         <button id="btn-stop" class="btn btn-red" onclick="Wizard.triggerStop()">⛔ STOP SESSION — Forced / Bad Rep</button>
         <div id="stop-status">Session stopped. Record what happened in notes.</div>
+        <div id="ai-stop-reason" style="display:none;"></div>
       </div>
       <div class="wizard-nav">
         <button class="btn btn-secondary" onclick="Wizard.goBack()">← Back</button>
@@ -762,12 +920,22 @@ input[type="range"] {
       <div class="step-title">Lift</div>
       <div class="step-subtitle">Log what you lifted</div>
 
+      <!-- Prescription reference — rendered by Wizard.renderPrescriptionCard() -->
+      <div id="step4-prescription-card"></div>
+
       <div class="card">
         <div class="lift-row-header">
           <span>Exercise</span><span>Sets</span><span>Reps</span><span>Load</span><span>RPE</span><span></span>
         </div>
         <div id="lift-rows-container"></div>
         <button class="btn btn-secondary mt-12" onclick="Wizard.addLiftRow()" style="font-size:13px;min-height:40px;">+ Add Exercise</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Accessories</div>
+        <div id="step4-accessories">
+          <!-- populated by Wizard.populateAccessoryDefaults() -->
+        </div>
       </div>
 
       <div class="card verdict-select-row">
@@ -814,6 +982,8 @@ input[type="range"] {
           <textarea id="sum-notes" placeholder="Anything else…" rows="2"></textarea>
         </div>
       </div>
+
+      <div id="ai-session-summary" style="display:none;"></div>
 
       <div class="wizard-nav">
         <button class="btn btn-secondary" onclick="Wizard.goBack()">← Back</button>
@@ -1098,6 +1268,7 @@ const Storage = {
         s.analysis = Analyzer.analyzeSession(s, State.sessions.slice(0, i));
       }
     });
+    BlockManager.init();
   },
   save() {
     localStorage.setItem(this.KEY, JSON.stringify({
@@ -1139,6 +1310,9 @@ const Storage = {
   reset() {
     State.sessions = JSON.parse(JSON.stringify(SampleData.sessions));
     State.nextPlan = null;
+    if (!State.settings) State.settings = {};
+    State.settings.accessoryBlocks = [];
+    State.settings.accessoryScores = {};
     State.sessions.forEach((s, i) => {
       s.analysis = Analyzer.analyzeSession(s, State.sessions.slice(0, i));
     });
@@ -1240,6 +1414,28 @@ const Analyzer = {
 
     // ── Issue type ──
     const fatiguePattern = trendScore < -0.4 && qualDropFromBest >= 2 && easeDropFromBest >= 1.5;
+    const qualityDrop = qualDropFromBest >= 2 || sessionVerdict === 'degraded';
+    const rhythmLoss = rhythmAvg < 6 && (qualAvg - rhythmAvg) > 1.5;
+    const lowReadiness = readinessScore < 5;
+    const highVariability = sessionConsistency < 0.5;
+
+    // ── Principle attachment ──
+    const principles = [];
+    function attachPrinciple(id) {
+      const p = ResearchDB.getPrincipleById(id);
+      if (p && !principles.find(x => x.id === id)) principles.push(p);
+    }
+    function attachByTrigger(trigger) {
+      ResearchDB.getPrinciplesByTrigger(trigger).forEach(p => {
+        if (!principles.find(x => x.id === p.id)) principles.push(p);
+      });
+    }
+
+    if (fatiguePattern)  attachByTrigger('fatigue_pattern');
+    if (qualityDrop)     attachByTrigger('quality_drop');
+    if (rhythmLoss)      attachByTrigger('rhythm_loss');
+    if (lowReadiness)    attachByTrigger('low_readiness');
+    if (highVariability) attachByTrigger('high_variability');
 
     let issueType = 'none';
     if (fatiguePattern && session.dayType === 'day2' && liftDose === 'risk') {
@@ -1300,7 +1496,8 @@ const Analyzer = {
       easeAvg: Math.round(easeAvg * 10) / 10,
       rhythmAvg: Math.round(rhythmAvg * 10) / 10,
       qualDropFromBest: Math.round(qualDropFromBest * 10) / 10,
-      trendScore: Math.round(trendScore * 100) / 100
+      trendScore: Math.round(trendScore * 100) / 100,
+      principles
     };
   },
   explanationText(a, session) {
@@ -1419,18 +1616,215 @@ const Wizard = {
   },
 
   defaultExercises(dayType) {
-    if (dayType === 'day2') return [
-      { name: 'Back Squat', sets: 4, reps: 4, load: '', rpe: 7 },
-      { name: 'RDL', sets: 3, reps: 5, load: '', rpe: 6 },
-      { name: 'Nordic Curl', sets: 3, reps: 4, load: 'BW', rpe: 7 },
-      { name: 'Copenhagen Hold', sets: 2, reps: 0, load: 'BW', rpe: 5 }
-    ];
     return [
       { name: 'Back Squat', sets: 4, reps: 4, load: '', rpe: 7 },
-      { name: 'RDL', sets: 3, reps: 5, load: '', rpe: 6 },
-      { name: 'Single-leg Drop Landing', sets: 3, reps: 4, load: 'BW', rpe: 5 },
-      { name: 'Ankle Pogos', sets: 2, reps: 6, load: 'BW', rpe: 4 }
+      { name: 'RDL', sets: 3, reps: 5, load: '', rpe: 6 }
     ];
+  },
+
+  renderPrescriptionCard() {
+    const card = document.getElementById('step4-prescription-card');
+    if (!card) return;
+
+    // Main lifts from plan or defaults
+    const plan = State.nextPlan;
+    const mainLifts = [
+      { name: 'Back Squat', sets: plan?.exercises?.find(e => e.name.includes('Squat'))?.sets || 4,
+        reps: plan?.exercises?.find(e => e.name.includes('Squat'))?.reps || 4, rpe: 7 },
+      { name: 'RDL', sets: plan?.exercises?.find(e => e.name === 'RDL')?.sets || 3,
+        reps: plan?.exercises?.find(e => e.name === 'RDL')?.reps || 5, rpe: 6 }
+    ];
+
+    card.innerHTML = `
+      <div class="rx-card">
+        <div class="rx-card-title">Today's Prescription</div>
+        <div class="rx-section-label">Main Lifts</div>
+        ${mainLifts.map(l => `
+          <div class="rx-row">
+            <span class="rx-row-name">${l.name}</span>
+            <span class="rx-row-val">${l.sets} × ${l.reps}</span>
+            <span class="rx-row-rpe">RPE ${l.rpe}</span>
+          </div>`).join('')}
+        <div class="rx-section-label">Accessories</div>
+        <div class="rx-row">
+          <span class="rx-row-name">Pogo Hops</span>
+          <span class="rx-row-val">3 × 8</span>
+          <span class="rx-row-rpe">BW</span>
+        </div>
+        <div id="rx-acc-rows"><div class="rx-loading">&#9675; Loading accessory prescriptions…</div></div>
+      </div>`;
+  },
+
+  fillRxAccRows(prescriptions) {
+    const container = document.getElementById('rx-acc-rows');
+    if (!container) return;
+    if (!prescriptions || prescriptions.length === 0) {
+      container.innerHTML = '<div class="rx-loading">No accessories selected.</div>';
+      return;
+    }
+    // Hard cap: max 9 sets for selected accessories (pogo 3 + 9 = 12 total session)
+    const SET_CAP = 9;
+    let rows = prescriptions.map(p => ({ ...p, _sets: parseInt(p.sets) || 2 }));
+    let total = rows.reduce((s, r) => s + r._sets, 0);
+    while (total > SET_CAP) {
+      const maxIdx = rows.reduce((best, r, i) => r._sets > rows[best]._sets ? i : best, 0);
+      if (rows[maxIdx]._sets <= 2) break;
+      rows[maxIdx]._sets--;
+      total--;
+    }
+    container.innerHTML = rows.map(({ ex, _sets, reps, rpe, rpeRange, key_cue }) => `
+      <div class="rx-row" style="flex-direction:column;align-items:flex-start;">
+        <div style="display:flex;justify-content:space-between;width:100%;">
+          <span class="rx-row-name">${ex.name}</span>
+          <span>
+            <span class="rx-row-val">${_sets} × ${reps}</span>
+            <span class="rx-row-rpe">RPE ${rpeRange || rpe}</span>
+          </span>
+        </div>
+        ${key_cue ? `<div class="rx-cue">&#9670; ${key_cue}</div>` : ''}
+      </div>`).join('');
+  },
+
+  populateAccessoryDefaults(picks) {
+    const container = document.getElementById('step4-accessories');
+    const lib = Plan.ACCESSORY_LIBRARY;
+    const planPicks = picks || (State.nextPlan && State.nextPlan.accessories) || [];
+
+    const optionsHTML = (required, defaultId) => {
+      const placeholder = required ? '<option value="">— select —</option>' : '<option value="">— none —</option>';
+      return placeholder + lib.map(ex =>
+        `<option value="${ex.id}"${ex.id === defaultId ? ' selected' : ''}>${ex.name}</option>`
+      ).join('');
+    };
+
+    // Build exec log row for a slot. IDs are keyed to slot number, NOT exercise id.
+    // This means dropdown changes never break the input elements.
+    const r = State.wizard.session.readiness || {};
+    const rxCtx = {
+      fatigue: ((r.legFreshness || 7) + (r.energy || 7)) / 2 < 5 ? 'high' : 'normal',
+      legFreshness: r.legFreshness,
+      energy: r.energy,
+      progressionDecision: (State.nextPlan && State.nextPlan.progressionDecision) || 'hold',
+      totalAccessories: planPicks.filter(p => p && p.id).length
+    };
+
+    const buildExecRow = (n, pick) => {
+      const ex = pick && lib.find(e => e.id === pick.id);
+      const show = !!ex;
+      const rx = ex ? Plan.localPrescribe(ex, rxCtx) : null;
+      const defaultSets = rx ? parseInt(rx.sets) : '';
+      const defaultRpe  = ex && ex.rx ? Math.round((ex.rx.rpe[0] + ex.rx.rpe[1]) / 2) : 7;
+      const rpeRange    = ex && ex.rx ? ex.rx.rpe[0] + '–' + ex.rx.rpe[1] : '7';
+      const hint        = rx ? `${rx.sets} × ${rx.reps} · RPE ${rpeRange}` : '';
+      const feelBtns = [1,2,3,4,5].map(v =>
+        `<button type="button" class="feel-btn" data-val="${v}"
+          onclick="(function(b){b.parentElement.querySelectorAll('.feel-btn').forEach(function(x){x.classList.remove('active')});b.classList.add('active');})(this)"
+          style="width:28px;height:28px;border-radius:4px;border:1px solid var(--border);background:var(--bg-input);color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;">${v}</button>`
+      ).join('');
+      return `
+        <div id="acc-exec-row-${n}" style="${show ? '' : 'display:none;'}padding:8px 0;border-bottom:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px;">
+            <div id="acc-exec-name-${n}" style="font-size:12px;font-weight:600;color:var(--text);">${ex ? ex.name : ''}</div>
+            <div id="acc-exec-hint-${n}" style="font-size:11px;color:var(--text-muted);">${hint}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="font-size:11px;color:var(--text-muted);">Sets</span>
+              <input type="number" id="exec-sets-${n}" value="${defaultSets}" placeholder="—" min="1" max="10"
+                style="width:50px;min-height:32px;font-size:13px;padding:0 6px;text-align:center;"
+                oninput="this.dataset.changed='1'">
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="font-size:11px;color:var(--text-muted);">Reps</span>
+              <input type="number" id="exec-reps-${n}" placeholder="—" min="1" max="30"
+                style="width:50px;min-height:32px;font-size:13px;padding:0 6px;text-align:center;"
+                oninput="this.dataset.changed='1'">
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;flex:1;min-width:120px;">
+              <span style="font-size:11px;color:var(--text-muted);">RPE</span>
+              <input type="range" id="exec-rpe-${n}" min="1" max="10" value="${defaultRpe}" style="flex:1;height:28px;"
+                oninput="this.dataset.changed='1';document.getElementById('exec-rpe-val-${n}').textContent=this.value">
+              <span id="exec-rpe-val-${n}" style="font-size:12px;color:var(--accent);min-width:16px;">${defaultRpe}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="font-size:11px;color:var(--text-muted);">Feel</span>
+              <div id="exec-feel-${n}" style="display:flex;gap:3px;">${feelBtns}</div>
+            </div>
+          </div>
+        </div>`;
+    };
+
+    container.innerHTML = `
+      <div class="accessory-row">
+        <span class="accessory-name">Pogo Hops</span>
+        <span class="badge badge-muted" style="font-size:11px;">Always</span>
+      </div>
+      <div class="divider"></div>
+      <div id="acc-ai-status" style="font-size:12px;color:var(--text-muted);margin-bottom:8px;display:none;">&#9675; AI selecting…</div>
+      <div class="accessory-row">
+        <span class="accessory-name">Pick 1</span>
+        <div class="accessory-swap">
+          <select id="acc-pick-1" onchange="Wizard.onAccPickChange(1)">${optionsHTML(true, planPicks[0]?.id || '')}</select>
+        </div>
+      </div>
+      <div class="accessory-row">
+        <span class="accessory-name">Pick 2</span>
+        <div class="accessory-swap">
+          <select id="acc-pick-2" onchange="Wizard.onAccPickChange(2)">${optionsHTML(true, planPicks[1]?.id || '')}</select>
+        </div>
+      </div>
+      <div class="accessory-row">
+        <span class="accessory-name">Pick 3 (optional)</span>
+        <div class="accessory-swap">
+          <select id="acc-pick-3" onchange="Wizard.onAccPickChange(3)">${optionsHTML(false, planPicks[2]?.id || '')}</select>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Execution Log</div>
+      ${buildExecRow(1, planPicks[0])}
+      ${buildExecRow(2, planPicks[1])}
+      ${buildExecRow(3, planPicks[2])}`;
+  },
+
+  // Called when any acc-pick-N dropdown changes. Updates name, hint, and resets inputs to new exercise defaults.
+  onAccPickChange(n) {
+    const val = document.getElementById('acc-pick-' + n)?.value;
+    const row = document.getElementById('acc-exec-row-' + n);
+    if (!row) return;
+    if (!val) { row.style.display = 'none'; return; }
+    const ex = Plan.ACCESSORY_LIBRARY.find(e => e.id === val);
+    if (!ex) { row.style.display = 'none'; return; }
+    row.style.display = '';
+    // Update name label
+    const nameEl = document.getElementById('acc-exec-name-' + n);
+    if (nameEl) nameEl.textContent = ex.name;
+    // Recompute prescription with current session context
+    const r = State.wizard.session.readiness || {};
+    const totalAccessories = [1,2,3].filter(s => !!document.getElementById('acc-pick-' + s)?.value).length;
+    const rxCtx = {
+      fatigue: ((r.legFreshness || 7) + (r.energy || 7)) / 2 < 5 ? 'high' : 'normal',
+      legFreshness: r.legFreshness,
+      energy: r.energy,
+      progressionDecision: (State.nextPlan && State.nextPlan.progressionDecision) || 'hold',
+      totalAccessories
+    };
+    const rx = Plan.localPrescribe(ex, rxCtx);
+    const rpeRange = ex.rx ? ex.rx.rpe[0] + '–' + ex.rx.rpe[1] : rx.rpe;
+    // Update prescription hint
+    const hintEl = document.getElementById('acc-exec-hint-' + n);
+    if (hintEl) hintEl.textContent = rx.sets + ' × ' + rx.reps + ' · RPE ' + rpeRange;
+    // Reset inputs to new exercise defaults (exercise changed = stale values are meaningless)
+    const setsEl = document.getElementById('exec-sets-' + n);
+    if (setsEl) { setsEl.value = parseInt(rx.sets); setsEl.dataset.changed = ''; }
+    const repsEl = document.getElementById('exec-reps-' + n);
+    if (repsEl) { repsEl.value = ''; repsEl.dataset.changed = ''; }
+    const defaultRpe = ex.rx ? Math.round((ex.rx.rpe[0] + ex.rx.rpe[1]) / 2) : 7;
+    const rpeEl = document.getElementById('exec-rpe-' + n);
+    if (rpeEl) { rpeEl.value = defaultRpe; rpeEl.dataset.changed = ''; }
+    const rpeValEl = document.getElementById('exec-rpe-val-' + n);
+    if (rpeValEl) rpeValEl.textContent = defaultRpe;
+    // Clear feel selection
+    document.querySelectorAll('#exec-feel-' + n + ' .feel-btn').forEach(b => b.classList.remove('active'));
   },
 
   addLiftRow() { this.addLiftRowWithData({ name: '', sets: 3, reps: 5, load: '', rpe: 7 }); },
@@ -1462,6 +1856,9 @@ const Wizard = {
     const step = State.wizard.step;
     if (step === 1) {
       this.readStep1();
+      if (State.settings.aiAssist) {
+        AIAssist.onStep1Complete(State.wizard.session.readiness); // non-blocking
+      }
     } else if (step === 2) {
       if (!State.wizard.session.dayType) {
         alert('Select Day 1 or Day 2 first.');
@@ -1476,6 +1873,26 @@ const Wizard = {
         return;
       }
       this.readStep3();
+      this.renderPrescriptionCard();
+      this.populateAccessoryDefaults();
+      if (State.settings.aiAssist) {
+        AIAssist.onStep4Accessories(); // non-blocking — fills rx-acc-rows and dropdowns
+      } else {
+        // No AI: use local deterministic prescriptions immediately
+        const picks = (State.nextPlan && State.nextPlan.accessories) || [];
+        const r = State.wizard.session.readiness || {};
+        const rxCtx = {
+          fatigue: ((r.legFreshness || 7) + (r.energy || 7)) / 2 < 5 ? 'high' : 'normal',
+          legFreshness: r.legFreshness,
+          energy: r.energy,
+          progressionDecision: (State.nextPlan && State.nextPlan.progressionDecision) || 'hold',
+          totalAccessories: picks.length
+        };
+        Wizard.fillRxAccRows(picks.map(ex => {
+          const rx = Plan.localPrescribe(ex, rxCtx);
+          return { ex, sets: rx.sets, reps: rx.reps, rpe: rx.rpe, rpeRange: rx.rpeRange, key_cue: rx.key_cue };
+        }));
+      }
     } else if (step === 4) {
       this.readStep4();
     }
@@ -1556,6 +1973,31 @@ const Wizard = {
       exercises,
       notes: document.getElementById('l-notes').value
     };
+
+    // Accessories — inputs are keyed to slot number (1/2/3), not exercise id
+    const acc = [];
+    for (const n of [1, 2, 3]) {
+      const val = document.getElementById('acc-pick-' + n)?.value;
+      if (val) {
+        const setsEl = document.getElementById('exec-sets-' + n);
+        const repsEl = document.getElementById('exec-reps-' + n);
+        const rpeEl  = document.getElementById('exec-rpe-' + n);
+        const feelEl = document.querySelector('#exec-feel-' + n + ' .feel-btn.active');
+        acc.push({
+          id: val,
+          sets:    setsEl && setsEl.value !== '' ? parseInt(setsEl.value) : null,
+          reps:    repsEl && repsEl.value !== '' ? parseInt(repsEl.value) : null,
+          rpe:     rpeEl  && rpeEl.dataset.changed ? parseInt(rpeEl.value) : null,
+          quality: feelEl ? parseInt(feelEl.dataset.val) : null,
+          notes:   ''
+        });
+      }
+    }
+    // Always prepend Pogo Hops
+    State.wizard.session.accessories = [
+      { id: 'pogo_hops', sets: null, reps: null, rpe: null, quality: null, notes: '' },
+      ...acc
+    ];
   },
 
   addRepCard() {
@@ -1581,7 +2023,9 @@ const Wizard = {
         ${this.sliderHTMLCompact(base + 'confidence', 'Confidence', 7)}
       </div>
       <div style="margin-top:4px;">
-        <input type="text" id="${base}notes" placeholder="Rep notes (optional)" style="font-size:14px;min-height:36px;">
+        <input type="text" id="${base}notes" placeholder="Rep notes (optional)" style="font-size:14px;min-height:36px;"
+          onblur="if(State.settings.aiAssist&&this.value.trim()){const ai=this.nextElementSibling;ai.style.display='block';const q=parseInt(document.getElementById('rep${n}-quality')?.value||7);const e=parseInt(document.getElementById('rep${n}-ease')?.value||7);const r=parseInt(document.getElementById('rep${n}-rhythm')?.value||7);const c=parseInt(document.getElementById('rep${n}-confidence')?.value||7);AIAssist.onRepNoteBlur(${n},this.value,{quality:q,ease:e,rhythm:r,confidence:c},ai);}">
+        <div id="${base}ai-block" style="display:none;"></div>
       </div>`;
     container.appendChild(div);
     this.updateRepCounter();
@@ -1642,9 +2086,14 @@ const Wizard = {
     btn.textContent = 'Session Stopped';
     document.getElementById('stop-status').style.display = 'block';
     document.getElementById('btn-add-rep').style.display = 'none';
+    if (State.settings.aiAssist) {
+      const reps = State.wizard.session.sprint.reps || [];
+      const lastRep = reps[reps.length - 1] || {};
+      AIAssist.onStop(State.wizard.repCount, lastRep.notes || '', reps.map(r => r.quality));
+    }
   },
 
-  submitSession() {
+  async submitSession() {
     this.readStep4();
     const sumBest = document.getElementById('sum-best').value;
     const sumBreak = document.getElementById('sum-break').value;
@@ -1658,11 +2107,25 @@ const Wizard = {
       readiness: State.wizard.session.readiness,
       sprint: State.wizard.session.sprint,
       lift: State.wizard.session.lift,
+      accessories: State.wizard.session.accessories || [],
       summary: State.wizard.session.summary
     };
 
     session.analysis = Analyzer.analyzeSession(session, State.sessions);
+
+    // Attach any AI outputs gathered during the wizard steps
+    session.aiOutputs = State.wizard.session._aiOutputs || {};
+
+    // AI session summary — awaited with 4s cap so it lands in the same save
+    if (State.settings.aiAssist) {
+      await Promise.race([
+        AIAssist.onSessionSubmit(session),
+        new Promise(r => setTimeout(r, 4000))
+      ]);
+    }
+
     State.sessions.push(session);
+    BlockManager.attachSession(session);
 
     // Auto-generate next plan
     State.nextPlan = Plan.generatePlan(session, State.sessions);
@@ -1670,7 +2133,7 @@ const Wizard = {
 
     // Reset wizard
     State.wizard.step = 1;
-    State.wizard.session = { readiness: {}, sprint: { reps: [] }, lift: { exercises: [] }, summary: {} };
+    State.wizard.session = { readiness: {}, sprint: { reps: [] }, lift: { exercises: [] }, accessories: [], summary: {} };
     State.wizard.stopTriggered = false;
     State.wizard.repCount = 0;
     this.init();
@@ -1751,6 +2214,44 @@ const AnalyzerTab = {
         <div class="analysis-row"><span class="analysis-label">Decision</span>${this.decisionBadge(a.progressionDecision)}</div>
       </div>
 
+      ${(() => {
+        const block = BlockManager.getBlockForSession(session.id);
+        if (!block) return '';
+        if (block.status === 'open') {
+          const bSess = State.sessions
+            .filter(s => block.sessionIds.includes(s.id))
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+          let trendText = 'no trend yet';
+          if (bSess.length >= 2) {
+            const fQ = bSess[0].analysis ? bSess[0].analysis.qualAvg : 0;
+            const lQ = bSess[bSess.length-1].analysis ? bSess[bSess.length-1].analysis.qualAvg : 0;
+            const fE = bSess[0].analysis ? bSess[0].analysis.easeAvg : 0;
+            const lE = bSess[bSess.length-1].analysis ? bSess[bSess.length-1].analysis.easeAvg : 0;
+            const dQ = lQ - fQ, dE = lE - fE;
+            const arQ = dQ > 0.2 ? '↑' : dQ < -0.2 ? '↓' : '→';
+            const arE = dE > 0.2 ? '↑' : dE < -0.2 ? '↓' : '→';
+            trendText = `Sprint quality: ${arQ} ${dQ>=0?'+':''}${dQ.toFixed(1)} · Ease: ${arE} ${dE>=0?'+':''}${dE.toFixed(1)}`;
+          }
+          return `<div class="card">
+            <div class="card-title">Accessory Block</div>
+            <div class="analysis-row">
+              <span class="analysis-label">${block.sessionIds.length} of 6 sessions</span>
+              <span class="badge badge-muted" style="font-size:10px;">open</span>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">${trendText}</div>
+          </div>`;
+        } else {
+          const ocMap = { strong_positive:'badge-green', positive:'badge-green', neutral:'badge-muted', negative:'badge-red', strong_negative:'badge-red' };
+          return `<div class="card">
+            <div class="card-title">Accessory Block</div>
+            <div class="analysis-row">
+              <span class="analysis-label">Block outcome</span>
+              <span class="badge ${ocMap[block.outcome]||'badge-muted'}">${(block.outcome||'unknown').replace(/_/g,' ')}</span>
+            </div>
+          </div>`;
+        }
+      })()}
+
       <div class="card">
         <div class="card-title">Metrics</div>
         <div class="analysis-row"><span class="analysis-label">Readiness Score</span><span style="font-weight:700;color:var(--text);">${a.readinessScore}/10${session.readiness.badSleep ? ' ⚠' : ''}</span></div>
@@ -1789,21 +2290,377 @@ const AnalyzerTab = {
 // PLAN TAB
 // ═══════════════════════════════════════════════════════
 const Plan = {
-  ACCESSORY_LIBRARY: {
-    day1: [
-      { name: 'Single-leg Drop Landing', sets: 3, reps: 4, load: 'BW' },
-      { name: 'Ankle Pogos', sets: 2, reps: 6, load: 'BW' },
-      { name: 'Hip Thrust', sets: 3, reps: 6, load: '' },
-      { name: 'Box Jump', sets: 3, reps: 3, load: 'BW' },
-      { name: 'A-Skip', sets: 3, reps: 10, load: 'BW' }
-    ],
-    day2: [
-      { name: 'Nordic Curl', sets: 3, reps: 4, load: 'BW' },
-      { name: 'Leg Curl', sets: 3, reps: 8, load: '' },
-      { name: 'Copenhagen Hold', sets: 2, reps: 0, load: 'BW' },
-      { name: 'Hip Flexor March', sets: 3, reps: 8, load: 'BW' },
-      { name: 'Calf Raise', sets: 3, reps: 10, load: '' }
-    ]
+  // Always included — non-negotiable
+  FIXED_ACCESSORIES: [
+    { id: 'pogo_hops', name: 'Pogo Hops', sets: 3, reps: 8, load: 'BW',
+      rx: { sets: [2,4], reps: [10,20], rpe: [5,7], cue: 'Stay stiff through ankle — minimal ground time' } }
+  ],
+
+  // Selectable pool — scored by CNS load, sprint quality, redundancy, loadability
+  ACCESSORY_LIBRARY: [
+    {
+      id: 'hf_control',
+      name: 'Hip Flexion → Slow Lower',
+      category: 'front_side',
+      cns: 9,
+      qualities: ['front_side_speed', 'timing', 'leg_recovery'],
+      redundancy: 10,
+      loadability: 9,
+      rx: { sets: [2,3], reps: [8,12], rpe: [6,8], cue: 'Slow lower over 3–4s, control at end range' }
+    },
+    {
+      id: 'cr_iso',
+      name: 'Calf Raise → Mid-Range Iso',
+      category: 'stiffness',
+      cns: 10,
+      qualities: ['ankle_stiffness', 'ground_contact'],
+      redundancy: 9,
+      loadability: 10,
+      rx: { sets: [2,3], reps: [8,12], rpe: [6,8], cue: 'Find mid-range tension, hold 2s at peak' }
+    },
+    {
+      id: 'nordic_hold',
+      name: 'Nordic → Catch & Hold',
+      category: 'hamstring',
+      cns: 7,
+      qualities: ['late_swing_control', 'eccentric_strength'],
+      redundancy: 9,
+      loadability: 8,
+      rx: { sets: [2,3], time: [10,20], rpe: [7,9], cue: 'Control descent, catch and hold — do not collapse' }
+    },
+    {
+      id: 'ht_switch',
+      name: 'Hip Thrust → Rapid Switch',
+      category: 'hip_extension',
+      cns: 8,
+      qualities: ['force_switching', 'hip_extension_speed'],
+      redundancy: 9,
+      loadability: 9,
+      rx: { sets: [2,4], reps: [8,15], rpe: [6,8], cue: 'Drive hard through heel, snap transition fast' }
+    },
+    {
+      id: 'add_pulse',
+      name: 'Adductor → Pulse Reps',
+      category: 'stability',
+      cns: 9,
+      qualities: ['pelvic_control', 'stride_transfer'],
+      redundancy: 10,
+      loadability: 10,
+      rx: { sets: [2,3], reps: [10,15], rpe: [6,7], cue: 'Short pulses from inner thigh, keep pelvis level' }
+    },
+    {
+      id: 'lc_speed',
+      name: 'Leg Curl → Explosive',
+      category: 'hamstring',
+      cns: 9,
+      qualities: ['contraction_speed', 'recovery_phase'],
+      redundancy: 9,
+      loadability: 10,
+      rx: { sets: [2,3], reps: [6,10], rpe: [7,8], cue: 'Explosive pull, slow 3s return — feel the braking load' }
+    },
+    {
+      id: 'ss_drive',
+      name: 'Split Squat → Forward Drive',
+      category: 'force_direction',
+      cns: 7,
+      qualities: ['horizontal_force', 'unilateral_strength'],
+      redundancy: 8,
+      loadability: 9,
+      rx: { sets: [2,3], reps: [6,10], rpe: [7,8], cue: 'Drive knee forward over toe, stay low through transition' }
+    },
+    {
+      id: 'ht_pause',
+      name: 'Hip Thrust → Pause Drive',
+      category: 'hip_extension',
+      cns: 8,
+      qualities: ['starting_force', 'glute_drive'],
+      redundancy: 8,
+      loadability: 10,
+      rx: { sets: [2,4], reps: [8,12], rpe: [7,8], cue: '2s pause at top, full glute squeeze before lowering' }
+    },
+    {
+      id: 'add_iso',
+      name: 'Adductor → Iso Hold',
+      category: 'stability',
+      cns: 10,
+      qualities: ['pelvic_stability', 'force_transfer'],
+      redundancy: 10,
+      loadability: 10,
+      rx: { sets: [2,3], time: [15,30], rpe: [7,8], cue: 'Maximum inner thigh pressure, breathe controlled' }
+    },
+    {
+      id: 'llr_pulse',
+      name: 'RDL → Pulse',
+      category: 'hamstring',
+      cns: 6,
+      qualities: ['long_length_force', 'force_timing'],
+      redundancy: 5,
+      loadability: 9,
+      rx: { sets: [2,3], reps: [8,12], rpe: [6,7], cue: 'Short pulse at bottom of range, feel hamstring tension' }
+    },
+    {
+      id: 'nordic_band',
+      name: 'Nordic (Band-Assisted)',
+      category: 'hamstring',
+      cns: 8,
+      qualities: ['late_swing_control', 'eccentric_strength', 'long_length_force'],
+      redundancy: 9,
+      loadability: 8,
+      rpeRange: '6-7',
+      rx: { sets: [2,3], reps: [4,8], rpe: [6,7], cue: 'Use band to control descent over 4–5s, catch and reset' },
+      instructions: [
+        'Anchor a resistance band in front of you at chest height.',
+        'Loop band around chest or under arms for assistance.',
+        'Kneel with ankles secured and torso upright.',
+        'Lower slowly over 3–5 seconds, keeping hips extended.',
+        'Use band to control descent — do NOT collapse.',
+        'Catch yourself lightly with hands and reset.',
+        'Stop before shaking or loss of control.'
+      ]
+    }
+  ],
+
+  _rxCache: {},
+
+  // Deterministic local fallback — always returns a valid prescription within rx bounds.
+  // bias: -1 = lower (high fatigue), 0 = mid (neutral), 1 = upper (good readiness + progression)
+  // context.totalAccessories: scales sets toward lower end when 3+ accessories to keep session volume sane
+  localPrescribe(ex, context = {}) {
+    const rx = ex && ex.rx;
+    if (!rx) return { sets: '2', reps: '8 reps', rpe: '7', rpeRange: '7', key_cue: '', reason: 'Default prescription.', _local: true };
+
+    const { fatigue, progressionDecision, legFreshness, energy, totalAccessories } = context;
+    const avgFresh = ((legFreshness || 7) + (energy || 7)) / 2;
+
+    let bias = 0;
+    if (fatigue === 'high' || avgFresh < 5) bias = -1;
+    else if ((progressionDecision === 'progress_reps' || progressionDecision === 'progress_fly') && avgFresh >= 7) bias = 1;
+
+    const pick = (lo, hi) => bias === -1 ? lo : bias === 1 ? hi : Math.round((lo + hi) / 2);
+
+    // With 3 accessories, cap sets at lower+1 to keep total session volume ≤12
+    const setsHi = (totalAccessories || 1) >= 3
+      ? Math.min(rx.sets[1], rx.sets[0] + 1)
+      : rx.sets[1];
+    const sets = pick(rx.sets[0], setsHi);
+    const rpe  = pick(rx.rpe[0], rx.rpe[1]);
+    const rpeRange = rx.rpe[0] + '–' + rx.rpe[1];
+    const volume = rx.time
+      ? pick(rx.time[0], rx.time[1]) + 's'
+      : pick(rx.reps[0], rx.reps[1]) + ' reps';
+
+    const reason = bias === -1
+      ? 'Volume scaled back — high fatigue detected.'
+      : bias === 1
+      ? 'Upper range selected — good readiness and progression signal.'
+      : 'Standard prescription — mid-range.';
+
+    return { sets: sets + '', reps: volume, rpe: rpe + '', rpeRange, key_cue: rx.cue || '', reason, _local: true };
+  },
+
+  async prescribeAccessory(exId, plan) {
+    const rxEl = document.getElementById('rx-' + exId);
+    if (!rxEl) return;
+
+    // Toggle off if already showing
+    if (rxEl.style.display !== 'none') {
+      rxEl.style.display = 'none';
+      return;
+    }
+
+    // Show cached result instantly
+    if (this._rxCache[exId]) {
+      rxEl.innerHTML = this._rxCache[exId];
+      rxEl.style.display = 'block';
+      return;
+    }
+
+    // Loading state
+    rxEl.style.display = 'block';
+    rxEl.innerHTML = '<div class="acc-rx-title">Prescription</div><div style="font-size:12px;color:var(--text-muted);">&#9675; Claude is prescribing…</div>';
+
+    // Find exercise in library or fixed
+    const ex = this.ACCESSORY_LIBRARY.find(e => e.id === exId)
+      || this.FIXED_ACCESSORIES.find(e => e.id === exId)
+      || { id: exId, name: exId, category: '', qualities: [], cns: 0 };
+
+    // Build context from last session + plan
+    const lastSession = State.sessions[State.sessions.length - 1];
+    const analysis = (plan && plan.progressionDecision) ? plan
+      : (lastSession && lastSession.analysis) || {};
+    const readiness = (lastSession && lastSession.readiness) || {};
+
+    // Relevant research principles by exercise category/qualities
+    const db = ResearchDB.get();
+    const principles = [];
+    if (db && db.principles) {
+      db.principles.forEach(p => {
+        const relevant = (p.tags || []).some(t =>
+          ex.qualities.includes(t) || t === ex.category
+        ) || (p.triggers || []).some(t =>
+          ex.qualities.includes(t) || t === ex.category
+        );
+        if (relevant && principles.length < 3) principles.push(p);
+      });
+      // Fallback: pull any principles matching session issueType
+      if (principles.length === 0 && analysis.issueType) {
+        ResearchDB.getPrinciplesByTrigger(analysis.issueType)
+          .slice(0, 2).forEach(p => principles.push(p));
+      }
+    }
+
+    const avgFreshness = ((readiness.legFreshness || 7) + (readiness.energy || 7)) / 2;
+    const notes = [
+      readiness.notes || '',
+      (lastSession && lastSession.summary && lastSession.summary.notes) || '',
+      (lastSession && lastSession.lift && lastSession.lift.notes) || ''
+    ].filter(Boolean).join(' ').trim();
+
+    const output = await AIAssist.call('prescribe_accessory', notes, {
+      exercise: ex,
+      issueType: analysis.issueType || 'none',
+      fatigue: avgFreshness < 5 ? 'high' : 'normal',
+      legFreshness: readiness.legFreshness,
+      energy: readiness.energy,
+      progressionDecision: analysis.progressionDecision || 'hold',
+      principles
+    });
+
+    const instructionsHTML = (ex.instructions && ex.instructions.length > 0) ? `
+      <div class="acc-rx-title" style="margin-top:10px;">How to Perform</div>
+      ${ex.rpeRange ? `<div style="font-size:11px;color:var(--text-muted);margin-bottom:4px;">Target RPE: ${ex.rpeRange}</div>` : ''}
+      <ol style="padding-left:16px;margin:0;font-size:12px;color:var(--text-muted);line-height:1.7;">
+        ${ex.instructions.map(i => `<li>${i}</li>`).join('')}
+      </ol>` : '';
+
+    // Use local fallback if AI failed — prescription must always show
+    const rx = (!output || output._error)
+      ? this.localPrescribe(ex, {
+          fatigue: avgFreshness < 5 ? 'high' : 'normal',
+          progressionDecision: analysis.progressionDecision || 'hold',
+          legFreshness: readiness.legFreshness,
+          energy: readiness.energy
+        })
+      : output;
+
+    const rpeDisplay = rx.rpeRange || (ex.rx ? ex.rx.rpe[0] + '–' + ex.rx.rpe[1] : rx.rpe);
+    const html = `
+      <div class="acc-rx-title">Prescription${rx._local ? ' <span style="font-size:10px;color:var(--text-dim);font-weight:400;">(local)</span>' : ''}</div>
+      <div class="acc-rx-numbers">${rx.sets} sets × ${rx.reps} · RPE ${rpeDisplay}</div>
+      ${rx.key_cue ? `<div class="acc-rx-cue">&#9670; ${rx.key_cue}</div>` : ''}
+      <div class="acc-rx-reason">${rx.reason || ''}</div>
+      ${instructionsHTML}`;
+    this._rxCache[exId] = html;
+    rxEl.innerHTML = html;
+  },
+
+  ACCESSORY_RULES: {
+    min: 2,
+    max: 3,
+    totalExercisesPerDay: 5,
+    mustInclude: ['non_redundant', 'low_cns_mix'],
+    avoidDuplicateCategory: true
+  },
+
+  // Maps analyzer issueType → target sprint qualities
+  ISSUE_TO_QUALITIES: {
+    // Analyzer native keys
+    fatigue:           ['ankle_stiffness', 'long_length_force'],
+    lift_interference: ['ankle_stiffness', 'long_length_force'],
+    force:             ['ankle_stiffness', 'pelvic_control'],
+    coordination:      ['timing', 'force_switching'],
+    exposure:          ['front_side_speed', 'contraction_speed'],
+    // Conceptual aliases
+    late_fatigue:      ['ankle_stiffness', 'long_length_force'],
+    loss_of_speed:     ['front_side_speed', 'contraction_speed'],
+    bad_contact:       ['ankle_stiffness', 'pelvic_control'],
+    timing_issue:      ['timing', 'force_switching'],
+    unstable_stride:       ['pelvic_stability', 'unilateral_strength'],
+    late_swing_breakdown:  ['late_swing_control', 'eccentric_strength']
+  },
+
+  selectAccessories({ issueType, fatigueHigh, notes }) {
+    const targetQualities = this.ISSUE_TO_QUALITIES[issueType] || [];
+
+    let candidates = targetQualities.length > 0
+      ? this.ACCESSORY_LIBRARY.filter(ex =>
+          ex.qualities.some(q => targetQualities.includes(q))
+        )
+      : [...this.ACCESSORY_LIBRARY];
+
+    // Priority boost: nordic_band tops the list for late_swing_breakdown
+    if (issueType === 'late_swing_breakdown') {
+      candidates = candidates.sort((a, b) => {
+        if (a.id === 'nordic_band') return -1;
+        if (b.id === 'nordic_band') return 1;
+        return 0;
+      });
+    }
+
+    // Low CNS first when fatigued (ascending sort)
+    if (fatigueHigh) {
+      candidates = candidates.sort((a, b) => a.cns - b.cns);
+    }
+
+    // Remove exercises redundant with RDL-heavy sessions
+    candidates = candidates.filter(ex => ex.redundancy > 6);
+
+    // Effectiveness scoring (veto rotate_out, then score and re-sort)
+    const _scores = State.settings.accessoryScores || {};
+    candidates = candidates
+      .filter(ex => BlockManager.getProgressionState(ex.id) !== 'rotate_out')
+      .map(ex => {
+        let sel = 0;
+        if (targetQualities.length > 0 && ex.qualities.some(q => targetQualities.includes(q))) sel += 1.5;
+        const sc = _scores[ex.id];
+        if (sc) {
+          sel += sc.avgImpact || 0;
+          const issD = sc.byIssueType && sc.byIssueType[issueType];
+          if (issD && issD.count >= 2) sel += (issD.avgImpact || 0) * 0.5;
+          if ((sc.consecutiveBlocks || 0) > 3) sel -= 1;
+        }
+        return Object.assign({}, ex, { _sel: sel });
+      })
+      .sort((a, b) => {
+        const diff = (b._sel || 0) - (a._sel || 0);
+        if (diff !== 0) return diff;
+        if (fatigueHigh) return (a.cns || 0) - (b.cns || 0);
+        return 0;
+      });
+
+    // Avoid duplicate categories; respect max
+    const selected = [];
+    const usedCategories = new Set();
+
+    for (const ex of candidates) {
+      if (!usedCategories.has(ex.category)) {
+        selected.push(ex);
+        usedCategories.add(ex.category);
+      }
+      if (selected.length === this.ACCESSORY_RULES.max) break;
+    }
+
+    // Fallback to top loadability picks if under min
+    if (selected.length < this.ACCESSORY_RULES.min) {
+      const fallback = this.ACCESSORY_LIBRARY
+        .filter(ex => !selected.find(s => s.id === ex.id) && ex.redundancy > 6)
+        .sort((a, b) => b.loadability - a.loadability);
+      for (const ex of fallback) {
+        if (!usedCategories.has(ex.category)) {
+          selected.push(ex);
+          usedCategories.add(ex.category);
+        }
+        if (selected.length === this.ACCESSORY_RULES.min) break;
+      }
+    }
+
+    // Overuse prevention: if nordic_band selected, remove other hamstring accessories
+    const hasNordic = selected.some(e => e.id === 'nordic_band');
+    if (hasNordic) {
+      return selected.filter(e => e.id === 'nordic_band' || e.category !== 'hamstring');
+    }
+
+    return selected;
   },
 
   generatePlan(session, allSessions) {
@@ -1838,32 +2695,77 @@ const Plan = {
       reasons.fly = `Hold — same fly distance.`;
     }
 
-    // Priority 2: Lift volume
-    let liftVolumeNote = '';
-    let reduceSets = false;
-    if (a.liftDose === 'risk') {
-      reduceSets = true;
-      liftVolumeNote = 'Reduce main lift sets by 1 — lift was heavy relative to sprint outcome.';
-    } else if (a.issueType === 'lift_interference') {
-      liftVolumeNote = 'Reduce accessory volume — lift interference pattern detected on Day 2.';
-    } else {
-      liftVolumeNote = 'Maintain lift volume.';
-    }
+    // Priority 1b: Principle-driven bias override
+    // Principles can only suppress progression — never force it.
+    const TRIGGER_BIAS = {
+      fatigue_pattern: 'hold',
+      quality_drop:    'hold',
+      low_readiness:   'hold',
+      high_variability:'hold',
+      rhythm_loss:     'note'
+    };
 
-    // Priority 3: Accessories
-    let accessoryNote = '';
-    if (a.issueType === 'coordination') accessoryNote = 'Add A-skip primer before working reps.';
-    else if (a.issueType === 'force') accessoryNote = 'Emphasise drop landings — force/stiffness issue detected.';
+    let principalBias = 'none';
+    const principleReasons = [];
 
-    // Build suggested exercises from last session
-    const lastExercises = JSON.parse(JSON.stringify(session.lift.exercises || []));
-    if (reduceSets) {
-      lastExercises.forEach(ex => {
-        if (['Back Squat', 'Front Squat', 'RDL', 'Deadlift'].includes(ex.name)) {
-          ex.sets = Math.max(2, (ex.sets || 3) - 1);
+    for (const principle of (a.principles || [])) {
+      for (const trigger of (principle.triggers || [])) {
+        const bias = TRIGGER_BIAS[trigger];
+        if (bias === 'hold' && principalBias !== 'hold') {
+          principalBias = 'hold';
+          principleReasons.push(`[${principle.id}] ${principle.sprint_implication || principle.summary || ''}`);
         }
-      });
+      }
     }
+
+    if (principalBias === 'hold' && (suggestedReps > sprint.ceilingReps || suggestedFly > sprint.fly)) {
+      suggestedReps = sprint.ceilingReps;
+      suggestedFly = sprint.fly;
+      reasons.principle_override = `Progression suppressed by research principle: ${principleReasons.join(' | ')}`;
+    }
+
+    // Priority 2: Lift progression
+    // Rules: only ONE variable changes per session; sprint quality takes priority.
+    const MAIN_LIFTS = ['Back Squat', 'Front Squat', 'RDL', 'Deadlift'];
+    const sprintUp = ['progress_reps', 'progress_fly'].includes(a.progressionDecision)
+      || (a.sessionVerdict === 'strong' && (a.sessionConsistency || 0) >= 0.7);
+    const sprintDown = a.progressionDecision && a.progressionDecision.startsWith('regress');
+    const fatigueUp  = !!a.fatiguePattern || a.liftDose === 'risk' || a.issueType === 'lift_interference';
+
+    let liftDecision, liftVolumeNote;
+    if (fatigueUp || sprintDown) {
+      liftDecision = 'decrease_sets';
+      liftVolumeNote = a.liftDose === 'risk'
+        ? 'Reduce main lift sets by 1 — lift dose heavy relative to sprint quality.'
+        : a.issueType === 'lift_interference'
+        ? 'Reduce main lift sets by 1 — lift interference pattern on Day 2.'
+        : 'Reduce main lift sets by 1 — sprint quality dropped.';
+    } else if (sprintUp) {
+      liftDecision = 'increase_sets';
+      liftVolumeNote = 'Add 1 set to main lifts — sprint quality strong and consistent.';
+    } else {
+      liftDecision = 'hold';
+      liftVolumeNote = 'Maintain lift volume — session acceptable, no sprint quality trigger.';
+    }
+
+    // Priority 3: Accessories — engine selection
+    const selectedAccessories = this.selectAccessories({
+      issueType: a.issueType || 'none',
+      fatigueHigh: !!a.fatiguePattern,
+      notes: session.postNotes || session.notes || ''
+    });
+
+    // Build suggested lift exercises from last session with progression applied
+    const lastExercises = JSON.parse(JSON.stringify(session.lift.exercises || []));
+    lastExercises.forEach(ex => {
+      if (!MAIN_LIFTS.includes(ex.name)) return;
+      if (liftDecision === 'decrease_sets') {
+        ex.sets = Math.max(2, (ex.sets || 3) - 1);
+      } else if (liftDecision === 'increase_sets') {
+        ex.sets = Math.min(5, (ex.sets || 3) + 1);
+      }
+      ex._liftDecision = liftDecision;
+    });
 
     // Determine next day type
     const nextDayType = session.dayType === 'day1' ? 'day2' : 'day1';
@@ -1875,9 +2777,10 @@ const Plan = {
       floorReps: suggestedFloor,
       ceilingReps: suggestedReps,
       exercises: lastExercises,
+      accessories: selectedAccessories,
       reasons,
       liftVolumeNote,
-      accessoryNote,
+      liftDecision,
       progressionDecision: a.progressionDecision,
       basedOnSessionId: session.id,
       basedOnSessionDate: session.date,
@@ -1948,17 +2851,55 @@ const Plan = {
         </div>
       </div>
 
+      ${p.reasons.principle_override ? `
+      <div class="card" style="border-left:2px solid var(--accent);">
+        <div class="card-title" style="color:var(--accent);">Research Override</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.5;">${p.reasons.principle_override}</div>
+      </div>` : ''}
+
       <div class="card">
         <div class="card-title">Lift Guidance</div>
-        <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">${p.liftVolumeNote}</div>
-        ${p.accessoryNote ? `<div style="font-size:13px;color:var(--accent);">${p.accessoryNote}</div>` : ''}
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <span class="badge badge-${p.liftDecision === 'increase_sets' ? 'green' : p.liftDecision === 'decrease_sets' ? 'red' : 'yellow'}">${(p.liftDecision || 'hold').replace(/_/g,' ')}</span>
+          <span style="font-size:12px;color:var(--text-muted);">${p.liftVolumeNote}</span>
+        </div>
         <div class="divider"></div>
         <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Planned exercises</div>
         ${(p.exercises || []).map(ex => `
           <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);">
             <span style="font-size:13px;">${ex.name}</span>
-            <span style="font-size:12px;color:var(--text-muted);">${ex.sets}×${ex.reps || '—'}${ex.load ? ' · '+ex.load : ''}</span>
+            <span style="font-size:12px;color:var(--text-muted);">${ex.sets}×${ex.reps || '—'}${ex.load ? ' · '+ex.load : ''}${ex.rpe ? ' @ RPE&nbsp;'+ex.rpe : ''}</span>
           </div>`).join('')}
+      </div>
+
+      <div class="card">
+        <div class="card-title">Accessories</div>
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Always</div>
+        ${Plan.FIXED_ACCESSORIES.map(ex => `
+          <div class="accessory-row" onclick="Plan.prescribeAccessory('${ex.id}', null)" style="cursor:pointer;">
+            <span class="accessory-name">${ex.name}</span>
+            <span style="font-size:12px;color:var(--text-muted);">tap for prescription ›</span>
+          </div>
+          <div id="rx-${ex.id}" class="acc-rx-block" style="display:none;"></div>`).join('')}
+        <div style="font-size:12px;color:var(--text-dim);margin:12px 0 8px;">Selected for this session</div>
+        ${(p.accessories || []).length === 0
+          ? `<div style="font-size:13px;color:var(--text-muted);">No specific accessories flagged.</div>`
+          : (p.accessories || []).map(ex => {
+              const sc = (State.settings.accessoryScores || {})[ex.id];
+              let badgeHTML = '';
+              if (sc && sc.totalExposures >= 2) {
+                const st = BlockManager.getProgressionState(ex.id);
+                const bm = { hold: 'badge-muted', micro_progress: 'badge-green', micro_regress: 'badge-yellow', rotate_out: 'badge-red' };
+                const lm = { hold: 'hold', micro_progress: 'progressing', micro_regress: 'regress', rotate_out: 'rotate out' };
+                badgeHTML = `<span class="badge ${bm[st] || 'badge-muted'}" style="font-size:10px;margin-right:4px;">${lm[st] || st}</span>`;
+              }
+              return `
+              <div class="accessory-row" onclick="Plan.prescribeAccessory('${ex.id}', State.nextPlan)" style="cursor:pointer;">
+                <span class="accessory-name">${ex.name}</span>
+                <span style="display:flex;align-items:center;">${badgeHTML}<span style="font-size:12px;color:var(--text-muted);">${ex.category} · tap ›</span></span>
+              </div>
+              <div id="rx-${ex.id}" class="acc-rx-block" style="display:none;"></div>`;
+            }).join('')}
       </div>
 
       <div class="card">
@@ -2003,6 +2944,215 @@ const Plan = {
     Storage.save();
     this.render();
     alert('Plan saved. It will pre-fill your next Log session.');
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// BLOCK MANAGER
+// ═══════════════════════════════════════════════════════
+const BlockManager = {
+  OUTCOME_IMPACT: {
+    strong_positive: 2, positive: 1, neutral: 0, negative: -1, strong_negative: -2
+  },
+
+  init() {
+    if (!State.settings.accessoryBlocks)  State.settings.accessoryBlocks  = [];
+    if (!State.settings.accessoryScores)  State.settings.accessoryScores  = {};
+    Plan.ACCESSORY_LIBRARY.forEach(ex => {
+      if (!State.settings.accessoryScores[ex.id]) {
+        State.settings.accessoryScores[ex.id] = {
+          totalExposures: 0, avgImpact: 0, recentBlockOutcomes: [],
+          consecutiveBlocks: 0, lastPositiveBlockDate: null,
+          byIssueType: {},
+          byFatigue: { high: { count: 0, avgImpact: 0 }, low: { count: 0, avgImpact: 0 } }
+        };
+      }
+    });
+  },
+
+  attachSession(session) {
+    if (!State.settings.accessoryBlocks) State.settings.accessoryBlocks = [];
+    if (!State.settings.accessoryScores) State.settings.accessoryScores = {};
+
+    const sessionAccIds = (session.accessories || [])
+      .filter(a => a.id !== 'pogo_hops').map(a => a.id).filter(Boolean);
+    if (sessionAccIds.length === 0) return;
+
+    const setsEqual = (a, b) => {
+      if (a.length !== b.length) return false;
+      const sa = new Set(a), sb = new Set(b);
+      for (const v of sa) if (!sb.has(v)) return false;
+      return true;
+    };
+
+    const analysis = session.analysis || {};
+    const fatigueHigh = analysis.readinessScore !== undefined ? analysis.readinessScore < 5 : false;
+    const openBlock = this.getCurrentBlock();
+
+    if (openBlock) {
+      if (setsEqual(openBlock.accessoryIds, sessionAccIds)) {
+        openBlock.sessionIds.push(session.id);
+        if (openBlock.sessionIds.length >= 6) this.closeBlock(openBlock, 'enough_sessions');
+      } else {
+        this.closeBlock(openBlock, 'accessory_change');
+        this.openBlock(sessionAccIds, session, analysis.issueType || 'none', fatigueHigh);
+        const nb = this.getCurrentBlock();
+        if (nb) nb.sessionIds.push(session.id);
+      }
+    } else {
+      this.openBlock(sessionAccIds, session, analysis.issueType || 'none', fatigueHigh);
+      const nb = this.getCurrentBlock();
+      if (nb) nb.sessionIds.push(session.id);
+    }
+
+    Storage.save();
+  },
+
+  openBlock(accessoryIds, session, issueTypeAtOpen, fatigueAtOpen) {
+    State.settings.accessoryBlocks.push({
+      id: Utils.uuid(),
+      status: 'open',
+      openedDate: session.date || new Date().toISOString(),
+      closedDate: null,
+      accessoryIds: [...accessoryIds],
+      sessionIds: [],
+      issueTypeAtOpen: issueTypeAtOpen || 'none',
+      fatigueAtOpen: !!fatigueAtOpen,
+      outcome: null, closedReason: null, computedAt: null
+    });
+    const sc = State.settings.accessoryScores;
+    Plan.ACCESSORY_LIBRARY.forEach(ex => {
+      if (!sc[ex.id]) return;
+      if (accessoryIds.includes(ex.id)) sc[ex.id].consecutiveBlocks = (sc[ex.id].consecutiveBlocks || 0) + 1;
+      else sc[ex.id].consecutiveBlocks = 0;
+    });
+  },
+
+  closeBlock(block, reason) {
+    block.status = 'closed';
+    block.closedDate = new Date().toISOString();
+    block.closedReason = reason;
+    if (block.sessionIds.length >= 3) this.evaluateBlock(block);
+    else block.outcome = 'neutral';
+  },
+
+  evaluateBlock(block) {
+    const bSessions = State.sessions
+      .filter(s => block.sessionIds.includes(s.id))
+      .sort((a, b) => new Date(a.date) - new Date(b.date));
+    if (bSessions.length < 3) { block.outcome = 'neutral'; return; }
+
+    const early = bSessions.length === 3 ? bSessions.slice(0,1) : bSessions.slice(0,2);
+    const late  = bSessions.length === 3 ? bSessions.slice(1,3) : bSessions.slice(-2);
+
+    const getM = arr => ({
+      qualAvg: Utils.avg(arr.map(s => s.analysis ? s.analysis.qualAvg : Utils.avg((s.sprint.reps||[]).map(r=>r.quality)))),
+      easeAvg: Utils.avg(arr.map(s => s.analysis ? s.analysis.easeAvg : Utils.avg((s.sprint.reps||[]).map(r=>r.ease)))),
+      consist: Utils.avg(arr.map(s => s.analysis ? s.analysis.sessionConsistency : 0.5))
+    });
+
+    const eM = getM(early), lM = getM(late);
+    let score = 0;
+
+    const dQ = lM.qualAvg - eM.qualAvg;
+    const dE = lM.easeAvg - eM.easeAvg;
+    const dC = lM.consist - eM.consist;
+
+    if (dQ >= 1.0) score += 2; else if (dQ >= 0.5) score += 1;
+    else if (dQ <= -1.0) score -= 2; else if (dQ <= -0.5) score -= 1;
+
+    if (dE >= 1.0) score += 2; else if (dE >= 0.5) score += 1;
+    else if (dE <= -1.0) score -= 2; else if (dE <= -0.5) score -= 1;
+
+    if (dC >= 0.05) score += 1; else if (dC <= -0.05) score -= 1;
+
+    // RPE modifier
+    const rpeVals = bSessions.map(s => {
+      const ae = (s.accessories||[]).filter(a => block.accessoryIds.includes(a.id) && a.rpe != null);
+      return ae.length > 0 ? Utils.avg(ae.map(a => a.rpe)) : null;
+    }).filter(v => v !== null);
+
+    if (rpeVals.length >= 2) {
+      const rSlope = Utils.slope(rpeVals);
+      const qSlope = Utils.slope(bSessions.map(s => s.analysis ? s.analysis.qualAvg : 5));
+      if (rSlope > 0 && qSlope <= 0) score -= 1;
+      else if (rSlope < 0 && qSlope >= 0) score += 1;
+    }
+
+    // Issue-type match bonus
+    const tQ = Plan.ISSUE_TO_QUALITIES[block.issueTypeAtOpen] || [];
+    if (tQ.length > 0 && block.accessoryIds.some(id => {
+      const ex = Plan.ACCESSORY_LIBRARY.find(e => e.id === id);
+      return ex && ex.qualities.some(q => tQ.includes(q));
+    })) score += 0.5;
+
+    if (score >= 3) block.outcome = 'strong_positive';
+    else if (score >= 1) block.outcome = 'positive';
+    else if (score === 0) block.outcome = 'neutral';
+    else if (score <= -3) block.outcome = 'strong_negative';
+    else block.outcome = 'negative';
+
+    block.computedAt = new Date().toISOString();
+    this.updateScores(block);
+  },
+
+  updateScores(block) {
+    const sc = State.settings.accessoryScores;
+    if (!sc) return;
+    block.accessoryIds.forEach(id => {
+      if (!sc[id]) sc[id] = {
+        totalExposures: 0, avgImpact: 0, recentBlockOutcomes: [],
+        consecutiveBlocks: 0, lastPositiveBlockDate: null,
+        byIssueType: {},
+        byFatigue: { high: { count: 0, avgImpact: 0 }, low: { count: 0, avgImpact: 0 } }
+      };
+      const s = sc[id];
+      s.totalExposures += 1;
+      s.recentBlockOutcomes.push(block.outcome);
+      if (s.recentBlockOutcomes.length > 6) s.recentBlockOutcomes = s.recentBlockOutcomes.slice(-6);
+      s.avgImpact = Utils.avg(s.recentBlockOutcomes.map(o => this.OUTCOME_IMPACT[o] || 0));
+      if (block.outcome === 'positive' || block.outcome === 'strong_positive')
+        s.lastPositiveBlockDate = block.closedDate || new Date().toISOString();
+
+      const ik = block.issueTypeAtOpen || 'none';
+      if (!s.byIssueType[ik]) s.byIssueType[ik] = { count: 0, avgImpact: 0 };
+      const iss = s.byIssueType[ik];
+      const imp = this.OUTCOME_IMPACT[block.outcome] || 0;
+      iss.avgImpact = (iss.avgImpact * iss.count + imp) / (iss.count + 1);
+      iss.count += 1;
+
+      const fk = block.fatigueAtOpen ? 'high' : 'low';
+      const fat = s.byFatigue[fk];
+      fat.avgImpact = (fat.avgImpact * fat.count + imp) / (fat.count + 1);
+      fat.count += 1;
+    });
+  },
+
+  getProgressionState(accessoryId) {
+    const sc = State.settings.accessoryScores;
+    if (!sc || !sc[accessoryId]) return 'hold';
+    const s = sc[accessoryId];
+    if (s.totalExposures < 2) return 'hold';
+    const outs = s.recentBlockOutcomes;
+    const n = outs.length;
+    if (n === 0) return 'hold';
+    const isNeg  = o => o === 'negative' || o === 'strong_negative';
+    const isWorse = o => ['neutral','negative','strong_negative'].includes(o);
+    const isPos  = o => o === 'positive' || o === 'strong_positive';
+    if (n >= 2 && isNeg(outs[n-1]) && isNeg(outs[n-2])) return 'rotate_out';
+    if (n >= 3 && isWorse(outs[n-1]) && isWorse(outs[n-2]) && isWorse(outs[n-3])) return 'rotate_out';
+    if (s.totalExposures >= 3 && !outs.some(isPos)) return 'rotate_out';
+    if (n >= 2 && isNeg(outs[n-1]) && !isNeg(outs[n-2])) return 'micro_regress';
+    if (n >= 2 && isPos(outs[n-1]) && isPos(outs[n-2])) return 'micro_progress';
+    return 'hold';
+  },
+
+  getCurrentBlock() {
+    return (State.settings.accessoryBlocks || []).find(b => b.status === 'open') || null;
+  },
+
+  getBlockForSession(sessionId) {
+    return (State.settings.accessoryBlocks || []).find(b => b.sessionIds.includes(sessionId)) || null;
   }
 };
 
@@ -2138,7 +3288,10 @@ const History = {
             <div style="font-size:14px;font-weight:700;">${Utils.fmtDate(s.date)} &middot; ${s.dayType === 'day1' ? 'Day 1' : 'Day 2'}</div>
             <div class="session-card-meta">${s.sprint.fly}m fly / ${s.sprint.build}m build &middot; ${reps.length} reps${s.sprint.stopTriggered ? ' ⛔' : ''}</div>
           </div>
-          ${vBadge}
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${vBadge}
+            <button onclick="event.stopPropagation();History.deleteSession('${s.id}')" title="Delete session" style="background:none;border:none;cursor:pointer;font-size:15px;color:var(--text-dim);padding:2px 4px;line-height:1;border-radius:4px;" onmouseover="this.style.color='var(--accent-red)'" onmouseout="this.style.color='var(--text-dim)'">&#x2715;</button>
+          </div>
         </div>
         <div class="session-card-body" id="card-body-${s.id}">
           <div class="session-stat-row">
@@ -2154,6 +3307,7 @@ const History = {
           </div>` : ''}
           ${s.summary && s.summary.bestPart ? `<div style="margin-top:10px;font-size:13px;color:var(--text-muted);"><strong style="color:var(--text);">Best:</strong> ${s.summary.bestPart}</div>` : ''}
           ${s.summary && s.summary.breakdownPoint ? `<div style="font-size:13px;color:var(--text-muted);margin-top:4px;"><strong style="color:var(--text);">Breakdown:</strong> ${s.summary.breakdownPoint}</div>` : ''}
+          ${(s.accessories||[]).some(ac => ac.rpe != null) ? `<div style="margin-top:8px;font-size:12px;color:var(--text-muted);"><span style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.06em;">Accessories</span> ${(s.accessories||[]).filter(ac=>ac.id!=='pogo_hops'&&ac.rpe!=null).map(ac=>{const ex=Plan.ACCESSORY_LIBRARY.find(e=>e.id===ac.id);const nm=ex?ex.name:ac.id;const stars=ac.quality?'★'.repeat(ac.quality):'';return nm+' RPE '+ac.rpe+(stars?' '+stars:'');}).join(' · ')}</div>` : ''}
           ${a.progressionDecision ? `<div style="margin-top:10px;"><span class="badge badge-${['progress_reps','progress_fly'].includes(a.progressionDecision)?'green':a.progressionDecision==='hold'?'yellow':'red'}">${a.progressionDecision.replace('_',' ')}</span></div>` : ''}
         </div>
       </div>`;
@@ -2162,6 +3316,13 @@ const History = {
   toggleCard(id) {
     const body = document.getElementById('card-body-' + id);
     if (body) body.classList.toggle('open');
+  },
+
+  deleteSession(id) {
+    if (!confirm('Delete this session? This cannot be undone.')) return;
+    State.sessions = State.sessions.filter(s => s.id !== id);
+    Storage.save();
+    this.render();
   }
 };
 
@@ -2255,6 +3416,321 @@ const Rules = {
 };
 
 // ═══════════════════════════════════════════════════════
+// RESEARCH DB
+// ═══════════════════════════════════════════════════════
+const ResearchDB = {
+  KEY: 'researchDB',
+
+  async load() {
+    try {
+      const res = await fetch('http://localhost:3001/api/research');
+      if (!res.ok) return;
+      const { data } = await res.json();
+      localStorage.setItem(this.KEY, JSON.stringify(data));
+    } catch (e) {
+      // Server not running or pipeline not run yet — use cached version if available
+    }
+  },
+
+  get() {
+    try {
+      const raw = localStorage.getItem(this.KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  getPrinciplesByTrigger(trigger) {
+    const db = this.get();
+    if (!db) return [];
+    return (db.principles || []).filter(p => p.triggers && p.triggers.includes(trigger));
+  },
+
+  getPrincipleById(id) {
+    const db = this.get();
+    if (!db) return null;
+    return (db.principles || []).find(p => p.id === id) || null;
+  },
+
+  getSources() {
+    const db = this.get();
+    return db ? (db.raw_sources || []) : [];
+  }
+};
+
+// ═══════════════════════════════════════════════════════
+// AI ASSIST
+// ═══════════════════════════════════════════════════════
+const AIAssist = {
+  SERVER: 'http://localhost:3001',
+
+  isEnabled() {
+    return State.settings.aiAssist === true;
+  },
+
+  toggleEnabled() {
+    State.settings.aiAssist = !State.settings.aiAssist;
+    Storage.save();
+    this.updateToggleUI();
+  },
+
+  updateToggleUI() {
+    const btn = document.getElementById('ai-toggle');
+    if (!btn) return;
+    btn.classList.toggle('on', this.isEnabled());
+    btn.title = this.isEnabled() ? 'AI Assist ON — click to disable' : 'AI Assist OFF — click to enable';
+  },
+
+  async call(mode, text, context) {
+    try {
+      const res = await fetch(`${this.SERVER}/api/ai/interpret`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode, text, ...context })
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      return data.output;
+    } catch (err) {
+      console.warn('[AI Assist]', mode, err.message);
+      return { _error: err.message };
+    }
+  },
+
+  showLoading(el) {
+    if (!el) return;
+    el.style.display = 'block';
+    el.innerHTML = '<div class="ai-loading">&#9675; Analyzing…</div>';
+  },
+
+  renderOutput(el, output) {
+    if (!el) return;
+    el.style.display = 'block';
+
+    if (!output || output._error) {
+      el.innerHTML = `<div class="ai-error">AI unavailable${output && output._error ? ': ' + output._error : ''}</div>`;
+      return;
+    }
+
+    const bodyId = 'ai-body-' + Math.random().toString(36).slice(2, 8);
+    const conf = typeof output.confidence === 'number' ? Math.round(output.confidence * 100) + '%' : '';
+    const badges = this._buildBadges(output);
+
+    el.innerHTML = `
+      <div class="ai-block">
+        <div class="ai-block-header" onclick="AIAssist.toggleBlock('${bodyId}')">
+          &#9670; AI Insight${conf ? ' &middot; ' + conf : ''}
+          <span class="ai-chevron">&#9660;</span>
+        </div>
+        <div class="ai-block-body" id="${bodyId}">
+          ${badges ? '<div class="ai-badge-row">' + badges + '</div>' : ''}
+          ${output.coach_summary ? '<div class="ai-summary">' + output.coach_summary + '</div>' : ''}
+        </div>
+      </div>`;
+  },
+
+  toggleBlock(id) {
+    const body = document.getElementById(id);
+    if (!body) return;
+    const header = body.previousElementSibling;
+    body.classList.toggle('open');
+    if (header) header.classList.toggle('open');
+  },
+
+  _buildBadges(output) {
+    const parts = [];
+    const addArr = (arr, cls) => {
+      if (!Array.isArray(arr)) return;
+      arr.filter(v => v !== 'none').forEach(v => {
+        parts.push('<span class="badge badge-' + cls + '" style="font-size:11px;">' + v.replace(/_/g, ' ') + '</span>');
+      });
+    };
+    addArr(output.readiness_flags, 'blue');
+    addArr(output.rep_tags, 'amber');
+    addArr(output.risk_flags, 'red');
+    if (output.normalized_stop_reason) {
+      parts.push('<span class="badge badge-yellow" style="font-size:11px;">' + output.normalized_stop_reason.replace(/_/g, ' ') + '</span>');
+    }
+    if (output.planner_impact_bias && output.planner_impact_bias !== 'none') {
+      parts.push('<span class="badge badge-muted" style="font-size:11px;">bias: ' + output.planner_impact_bias.replace(/_/g, ' ') + '</span>');
+    }
+    return parts.join('');
+  },
+
+  // Step 1: pre-session readiness notes
+  async onStep1Complete(readiness) {
+    const el = document.getElementById('ai-pre-session');
+    this.showLoading(el);
+    const output = await this.call('pre_session', readiness.notes || '', {
+      legFreshness: readiness.legFreshness,
+      generalFreshness: readiness.generalFreshness,
+      energy: readiness.energy,
+      badSleep: readiness.badSleep
+    });
+    this.renderOutput(el, output);
+    if (output && !output._error) {
+      State.wizard.session._aiOutputs = State.wizard.session._aiOutputs || {};
+      State.wizard.session._aiOutputs.pre_session = output;
+    }
+  },
+
+  // Step 3: per-rep note (triggered on blur of notes input)
+  async onRepNoteBlur(repNum, text, scores, aiBlockEl) {
+    this.showLoading(aiBlockEl);
+    const output = await this.call('rep_note', text, {
+      repNum,
+      quality: scores.quality,
+      ease: scores.ease,
+      rhythm: scores.rhythm,
+      confidence: scores.confidence
+    });
+    this.renderOutput(aiBlockEl, output);
+    if (output && !output._error) {
+      State.wizard.session._aiOutputs = State.wizard.session._aiOutputs || {};
+      State.wizard.session._aiOutputs['rep_' + repNum] = output;
+    }
+  },
+
+  // Step 3: stop triggered
+  async onStop(repCount, lastRepNotes, repQualities) {
+    const el = document.getElementById('ai-stop-reason');
+    this.showLoading(el);
+    const output = await this.call('stop_reason_normalize', lastRepNotes, {
+      repCount,
+      repQualities: repQualities.join(', ')
+    });
+    this.renderOutput(el, output);
+    if (output && !output._error) {
+      State.wizard.session._aiOutputs = State.wizard.session._aiOutputs || {};
+      State.wizard.session._aiOutputs.stop_reason = output;
+    }
+  },
+
+  // Step 4: accessory selection — runs after sprint reps captured
+  async onStep4Accessories() {
+    const statusEl = document.getElementById('acc-ai-status');
+    if (statusEl) statusEl.style.display = 'block';
+
+    // Derive fatigue from readiness scores
+    const r = State.wizard.session.readiness || {};
+    const avgFreshness = ((r.legFreshness || 7) + (r.energy || 7)) / 2;
+    const fatigue = avgFreshness < 5 ? 'high' : 'normal';
+
+    // Run partial analysis on captured sprint data to get issueType
+    let issueType = 'none';
+    try {
+      const s = State.wizard.session;
+      if (s.sprint && s.sprint.reps && s.sprint.reps.length > 0) {
+        const partial = Analyzer.analyzeSession(
+          { ...s, lift: { exercises: [], verdict: 'neutral', notes: '' }, summary: { bestPart: '', breakdownPoint: '', notes: '' } },
+          State.sessions
+        );
+        issueType = partial.issueType || 'none';
+      }
+    } catch (e) { /* partial analysis failed — use 'none' */ }
+
+    const notes = (r.notes || '') + ' ' + (State.wizard.session.sprint?.notes || '');
+
+    const output = await this.call('select_accessories', notes.trim(), {
+      issueType,
+      fatigue,
+      library: Plan.ACCESSORY_LIBRARY
+    });
+
+    if (statusEl) statusEl.style.display = 'none';
+
+    // If AI selection failed, fall back to local deterministic selection
+    const readiness = State.wizard.session.readiness || {};
+    let picks;
+    if (!output || output._error || !Array.isArray(output.selected) || output.selected.length === 0) {
+      picks = Plan.selectAccessories({ issueType, fatigueHigh: fatigue === 'high', notes: '' });
+    } else {
+      picks = output.selected
+        .map(item => Plan.ACCESSORY_LIBRARY.find(ex => ex.id === item.id))
+        .filter(Boolean);
+      if (picks.length === 0) picks = Plan.selectAccessories({ issueType, fatigueHigh: fatigue === 'high', notes: '' });
+    }
+
+    Wizard.populateAccessoryDefaults(picks);
+    State.wizard.session._aiOutputs = State.wizard.session._aiOutputs || {};
+    if (output && !output._error) State.wizard.session._aiOutputs.accessories = output.selected;
+
+    // Fetch prescriptions — AI with local fallback per exercise
+    const lastSession = State.sessions[State.sessions.length - 1];
+    const notesText = [
+      readiness.notes || '',
+      State.wizard.session.sprint?.notes || '',
+      (lastSession?.summary?.notes) || ''
+    ].filter(Boolean).join(' ').trim();
+
+    const rxContext = {
+      fatigue,
+      legFreshness: readiness.legFreshness,
+      energy: readiness.energy,
+      progressionDecision: (State.nextPlan && State.nextPlan.progressionDecision) || 'hold',
+      totalAccessories: picks.length
+    };
+
+    const rxPromises = picks.map(ex => {
+      const principles = [];
+      const db = ResearchDB.get();
+      if (db && db.principles) {
+        db.principles.forEach(p => {
+          const rel = (p.tags || []).some(t => ex.qualities.includes(t) || t === ex.category)
+            || (p.triggers || []).some(t => ex.qualities.includes(t) || t === ex.category);
+          if (rel && principles.length < 2) principles.push(p);
+        });
+      }
+      return this.call('prescribe_accessory', notesText, {
+        exercise: ex, issueType, ...rxContext, principles
+      }).then(rx => ({ ex, rx: (!rx || rx._error) ? Plan.localPrescribe(ex, rxContext) : rx }));
+    });
+
+    const results = await Promise.all(rxPromises);
+
+    // Update prescription card — always has data now, with rpeRange for clear display
+    Wizard.fillRxAccRows(results.map(({ ex, rx }) => ({
+      ex, sets: rx.sets, reps: rx.reps, rpe: rx.rpe,
+      rpeRange: rx.rpeRange || (ex.rx ? ex.rx.rpe[0] + '–' + ex.rx.rpe[1] : rx.rpe),
+      key_cue: rx.key_cue
+    })));
+
+    // Cache for Plan tab
+    results.forEach(({ ex, rx }) => {
+      const rpeRange = rx.rpeRange || (ex.rx ? ex.rx.rpe[0] + '–' + ex.rx.rpe[1] : rx.rpe);
+      const local = rx._local ? ' <span style="font-size:10px;color:var(--text-dim);font-weight:400;">(local)</span>' : '';
+      Plan._rxCache[ex.id] = `
+        <div class="acc-rx-title">Prescription${local}</div>
+        <div class="acc-rx-numbers">${rx.sets} sets × ${rx.reps} · RPE ${rpeRange}</div>
+        ${rx.key_cue ? `<div class="acc-rx-cue">&#9670; ${rx.key_cue}</div>` : ''}
+        <div class="acc-rx-reason">${rx.reason || ''}</div>`;
+    });
+  },
+
+  // Step 5: session summary (called from submitSession, mutates session.aiOutputs)
+  async onSessionSubmit(session) {
+    const el = document.getElementById('ai-session-summary');
+    this.showLoading(el);
+    const output = await this.call('session_summary', session.summary.notes || '', {
+      bestPart: session.summary.bestPart,
+      breakdownPoint: session.summary.breakdownPoint,
+      sessionVerdict: session.analysis && session.analysis.sessionVerdict,
+      repCount: session.sprint.reps ? session.sprint.reps.length : 0,
+      stopTriggered: session.sprint.stopTriggered
+    });
+    this.renderOutput(el, output);
+    if (output && !output._error) {
+      session.aiOutputs = session.aiOutputs || {};
+      session.aiOutputs.session_summary = output;
+    }
+  }
+};
+
+// ═══════════════════════════════════════════════════════
 // APP INIT
 // ═══════════════════════════════════════════════════════
 const App = {
@@ -2262,6 +3738,8 @@ const App = {
     Storage.load();
     Wizard.init();
     document.getElementById('top-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    AIAssist.updateToggleUI();
+    ResearchDB.load();
   },
   refresh() {
     if (State.activeTab === 'analyzer') AnalyzerTab.render();
