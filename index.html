@@ -861,7 +861,7 @@ input[type="range"] {
         <div class="inline-row">
           <div class="field">
             <label>Build</label>
-            <input type="number" id="s-build" value="30" min="15" max="40">
+            <input type="number" id="s-build" value="35" min="15" max="40">
           </div>
           <div class="field">
             <label>Fly</label>
@@ -904,7 +904,10 @@ input[type="range"] {
       <div id="rep-counter" class="rep-counter"></div>
       <div id="rep-cards-container"></div>
       <div class="stop-zone">
-        <button id="btn-stop" class="btn btn-red" onclick="Wizard.triggerStop()">⛔ STOP SESSION — Forced / Bad Rep</button>
+        <div style="display:flex;gap:8px;">
+          <button id="btn-stop-forced" class="btn btn-red" onclick="Wizard.triggerStop('forced')" style="flex:1;">⛔ Stop — Bad Rep / Risk</button>
+          <button id="btn-stop-planned" class="btn btn-secondary" onclick="Wizard.triggerStop('planned')" style="flex:1;">✓ Done — Planned Cap</button>
+        </div>
         <div id="stop-status">Session stopped. Record what happened in notes.</div>
         <div id="ai-stop-reason" style="display:none;"></div>
       </div>
@@ -1147,7 +1150,7 @@ const SampleData = {
       dayType: 'day1',
       readiness: { badSleep: false, legFreshness: 8, generalFreshness: 8, energy: 9, notes: 'Felt ready, legs bouncy' },
       sprint: {
-        build: 30, fly: 15, floorReps: 3, ceilingReps: 5,
+        build: 35, fly: 15, floorReps: 3, ceilingReps: 5,
         stopTriggered: false, notes: 'Dry track, good weather',
         reps: [
           { repNum: 1, quality: 8, ease: 8, rhythm: 8, confidence: 8, notes: '' },
@@ -1175,7 +1178,7 @@ const SampleData = {
       dayType: 'day2',
       readiness: { badSleep: false, legFreshness: 6, generalFreshness: 6, energy: 7, notes: 'Decent, slight heaviness' },
       sprint: {
-        build: 30, fly: 15, floorReps: 3, ceilingReps: 5,
+        build: 35, fly: 15, floorReps: 3, ceilingReps: 5,
         stopTriggered: false, notes: '',
         reps: [
           { repNum: 1, quality: 7, ease: 6, rhythm: 6, confidence: 7, notes: '' },
@@ -1201,7 +1204,7 @@ const SampleData = {
       dayType: 'day1',
       readiness: { badSleep: true, legFreshness: 4, generalFreshness: 5, energy: 4, notes: 'Poor sleep, heavy legs all morning' },
       sprint: {
-        build: 30, fly: 15, floorReps: 3, ceilingReps: 5,
+        build: 35, fly: 15, floorReps: 3, ceilingReps: 5,
         stopTriggered: true, notes: 'Should have called it earlier',
         reps: [
           { repNum: 1, quality: 6, ease: 5, rhythm: 5, confidence: 5, notes: '' },
@@ -1361,10 +1364,14 @@ const Analyzer = {
     const rhythmConsist = Utils.consistencyScore(rhythmArr);
     const sessionConsistency = Utils.avg([qualConsist, easeConsist, rhythmConsist]);
 
+    const confAvg = Utils.avg(confArr);
+    const confConsist = Utils.consistencyScore(confArr);
+
     const readiness = session.readiness;
     const readinessScore = Utils.avg([readiness.legFreshness, readiness.generalFreshness, readiness.energy]) - (readiness.badSleep ? 1.5 : 0);
 
     const stopTriggered = session.sprint.stopTriggered;
+    const plannedStop = session.sprint.stopType === 'planned';
     const repCount = reps.length;
     const ceilingReps = session.sprint.ceilingReps;
     const floorReps = session.sprint.floorReps;
@@ -1376,13 +1383,20 @@ const Analyzer = {
     const easeDropFromBest = easeArr.length ? easeMax - easeArr[easeArr.length - 1] : 0;
     const trendScore = Utils.slope(qualArr);
 
+    // AI context modifier: pre_session note_only = return from break / external conditions
+    const aiPreSession = (session.aiOutputs || {}).pre_session;
+    const aiContextOnly = aiPreSession && aiPreSession.planner_impact_bias === 'note_only';
+
     // ── Session verdict ──
+    // FIX: repCount vs ceiling does NOT gate the verdict — quality/ease/consistency decide it.
+    // Volume compliance is tracked via sprintDose separately.
+    const effectiveStop = stopTriggered && !plannedStop;
     let sessionVerdict;
-    if (stopTriggered && repCount <= 2) {
+    if (effectiveStop && repCount <= 2) {
       sessionVerdict = 'abort';
-    } else if (qualAvg >= 7.5 && easeAvg >= 7.0 && sessionConsistency >= 0.7 && !stopTriggered && repCount >= ceilingReps) {
+    } else if (qualAvg >= 7.5 && easeAvg >= 7.0 && sessionConsistency >= 0.7 && !effectiveStop) {
       sessionVerdict = 'strong';
-    } else if (qualAvg >= 6.0 && easeAvg >= 6.0 && !stopTriggered) {
+    } else if (qualAvg >= 6.0 && easeAvg >= 6.0 && !effectiveStop) {
       sessionVerdict = 'acceptable';
     } else {
       sessionVerdict = 'degraded';
@@ -1392,7 +1406,7 @@ const Analyzer = {
     let sprintDose;
     if (!stopTriggered && repCount < floorReps) {
       sprintDose = 'low';
-    } else if (repCount > ceilingReps || (sessionVerdict === 'degraded' && repCount > floorReps)) {
+    } else if (repCount > ceilingReps) {
       sprintDose = 'high';
     } else {
       sprintDose = 'good';
@@ -1406,14 +1420,19 @@ const Analyzer = {
     let liftDose;
     if (liftVerdict === 'supportive' && sessionVerdict !== 'degraded') {
       liftDose = 'supportive';
-    } else if (liftVerdict === 'too_much' && (sessionVerdict === 'degraded' || stopTriggered || qualDropFromBest >= 2)) {
+    } else if (liftVerdict === 'too_much' && (sessionVerdict === 'degraded' || effectiveStop || qualDropFromBest >= 2)) {
       liftDose = 'risk';
     } else {
       liftDose = 'neutral';
     }
 
     // ── Issue type ──
-    const fatiguePattern = trendScore < -0.4 && qualDropFromBest >= 2 && easeDropFromBest >= 1.5;
+    // FIX2+3: OR paths catch single-signal severe fatigue; slope gated to ≥4 reps (prevents false triggers on short sessions)
+    const slopeValid = qualArr.length >= 4;
+    const fatiguePattern =
+      (slopeValid && trendScore < -0.4 && qualDropFromBest >= 2 && easeDropFromBest >= 1.5) ||
+      (qualDropFromBest >= 3) ||
+      (slopeValid && trendScore < -0.6 && qualDropFromBest >= 1.5);
     const qualityDrop = qualDropFromBest >= 2 || sessionVerdict === 'degraded';
     const rhythmLoss = rhythmAvg < 6 && (qualAvg - rhythmAvg) > 1.5;
     const lowReadiness = readinessScore < 5;
@@ -1457,28 +1476,50 @@ const Analyzer = {
     }
 
     // ── Progression decision ──
-    // Need last 2 prior sessions for progress checks
+    // FIX: "2 consecutive strong sessions" means current session + 1 prior (not 2 prior).
     const prev = priorSessions ? priorSessions.slice(-2) : [];
-    const bothStrong = prev.length >= 2 && prev.every(s => s.analysis && s.analysis.sessionVerdict === 'strong');
-    const bothStrongConsistent = bothStrong && prev.every(s => s.analysis && s.analysis.sessionConsistency >= 0.7);
+    const prevSession = prev.length >= 1 ? prev[prev.length - 1] : null;
+    const prevStrong = !!(prevSession?.analysis?.sessionVerdict === 'strong');
+    const prevConsistent = prevStrong && (prevSession.analysis.sessionConsistency ?? 0) >= 0.7;
+    const twoConsecutiveStrong = sessionVerdict === 'strong' && prevStrong;
+    const twoConsecutiveStrongConsistent = twoConsecutiveStrong && sessionConsistency >= 0.7 && prevConsistent;
+
+    // FIX: Accumulated acceptable path — 2 prior acceptable/strong sessions + current acceptable at full volume
+    const accumulatedAcceptable =
+      sessionVerdict === 'acceptable' && qualAvg >= 7.0 && repCount >= ceilingReps && readinessScore >= 5 &&
+      prev.length >= 2 &&
+      prev.every(s => s.analysis && s.analysis.sessionVerdict !== 'degraded' && s.analysis.sessionVerdict !== 'abort' && (s.analysis.qualAvg ?? 0) >= 7.0);
 
     // Fly unchanged for last 2+ sessions
     const flyHistory = [...(priorSessions || []), session].map(s => s.sprint.fly);
     const flyUnchanged2 = flyHistory.length >= 2 && flyHistory.slice(-2).every(f => f === session.sprint.fly);
 
+    // FIX5: Relax readiness gate from 6→5 when recent context was off-season/return (note_only)
+    const recentNoteOnly = priorSessions && priorSessions.slice(-2).some(s =>
+      (s.aiOutputs || {}).pre_session && s.aiOutputs.pre_session.planner_impact_bias === 'note_only');
+    const readinessGate = (aiContextOnly || recentNoteOnly) ? 5 : 6;
+
     let progressionDecision;
-    if (stopTriggered || sessionVerdict === 'degraded' || sessionVerdict === 'abort') {
-      // Check for fly regression: 2 consecutive degraded + force issue
-      const prev1 = priorSessions && priorSessions.length >= 1 ? priorSessions[priorSessions.length - 1] : null;
-      const prevDegraded = prev1 && prev1.analysis && (prev1.analysis.sessionVerdict === 'degraded' || prev1.analysis.sessionVerdict === 'abort');
-      if (prevDegraded && issueType === 'force') {
-        progressionDecision = 'regress_fly';
+    if (effectiveStop || sessionVerdict === 'degraded' || sessionVerdict === 'abort') {
+      // FIX: AI note_only context (return from break, external conditions) prevents regression
+      if (aiContextOnly) {
+        progressionDecision = 'hold';
       } else {
-        progressionDecision = 'regress_reps';
+        const prev1 = priorSessions && priorSessions.length >= 1 ? priorSessions[priorSessions.length - 1] : null;
+        const prevDegraded = prev1 && prev1.analysis && (prev1.analysis.sessionVerdict === 'degraded' || prev1.analysis.sessionVerdict === 'abort');
+        if (prevDegraded && issueType === 'force') {
+          progressionDecision = 'regress_fly';
+        } else {
+          progressionDecision = 'regress_reps';
+        }
       }
-    } else if (bothStrongConsistent && repCount >= ceilingReps && ceilingReps >= 6 && flyUnchanged2 && readinessScore >= 6) {
+    // FIX: progress_fly threshold lowered from ceilingReps >= 6 to >= 4
+    } else if (twoConsecutiveStrongConsistent && repCount >= ceilingReps && ceilingReps >= 4 && flyUnchanged2 && readinessScore >= readinessGate) {
       progressionDecision = 'progress_fly';
-    } else if (bothStrongConsistent && repCount >= ceilingReps && readinessScore >= 6) {
+    } else if (twoConsecutiveStrongConsistent && repCount >= ceilingReps && readinessScore >= readinessGate) {
+      progressionDecision = 'progress_reps';
+    } else if (accumulatedAcceptable) {
+      // Consistent high-acceptable volume: 3 sessions at 7.0+ at ceiling → allow rep progression
       progressionDecision = 'progress_reps';
     } else {
       progressionDecision = 'hold';
@@ -1495,6 +1536,7 @@ const Analyzer = {
       qualAvg: Math.round(qualAvg * 10) / 10,
       easeAvg: Math.round(easeAvg * 10) / 10,
       rhythmAvg: Math.round(rhythmAvg * 10) / 10,
+      confAvg: Math.round(confAvg * 10) / 10,
       qualDropFromBest: Math.round(qualDropFromBest * 10) / 10,
       trendScore: Math.round(trendScore * 100) / 100,
       principles
@@ -1504,10 +1546,11 @@ const Analyzer = {
     const lines = [];
     const v = a.sessionVerdict;
     const d = a.progressionDecision;
-    if (v === 'strong') lines.push(`Session was strong — quality avg ${a.qualAvg}, ease avg ${a.easeAvg}, consistency ${Math.round(a.sessionConsistency * 100)}%.`);
-    else if (v === 'acceptable') lines.push(`Session was acceptable. Quality avg ${a.qualAvg}, ease avg ${a.easeAvg}. Not yet strong enough to count toward progression.`);
-    else if (v === 'degraded') lines.push(`Session degraded — quality avg ${a.qualAvg}, ease avg ${a.easeAvg}. ${session.sprint.stopTriggered ? 'Stop was triggered.' : 'Quality/ease fell below threshold.'}`);
-    else lines.push('Session aborted early — stop triggered on rep 1 or 2.');
+    const hitCeiling = (session.sprint.reps?.length ?? 0) >= session.sprint.ceilingReps;
+    if (v === 'strong') lines.push(`Session was strong — quality avg ${a.qualAvg}, ease avg ${a.easeAvg}, consistency ${Math.round(a.sessionConsistency * 100)}%.${!hitCeiling ? ' Rep ceiling not reached — volume note only, verdict stands.' : ''}`);
+    else if (v === 'acceptable') lines.push(`Session was acceptable — quality avg ${a.qualAvg}, ease avg ${a.easeAvg}. Threshold for strong: 7.5 quality / 7.0 ease / 70% consistency.`);
+    else if (v === 'degraded') lines.push(`Session degraded — quality avg ${a.qualAvg}, ease avg ${a.easeAvg}. ${session.sprint.stopTriggered && session.sprint.stopType !== 'planned' ? 'Stop was triggered.' : 'Quality/ease fell below threshold.'}`);
+    else lines.push('Session aborted early — forced stop on rep 1 or 2.');
 
     if (a.issueType === 'fatigue') lines.push('Pattern: fatigue — quality trending downward across the session (slope ' + a.trendScore + ', drop from best: ' + a.qualDropFromBest + ' pts).');
     else if (a.issueType === 'lift_interference') lines.push('Pattern: lift interference — fatigue pattern on Day 2 combined with high lift demand.');
@@ -1517,7 +1560,7 @@ const Analyzer = {
 
     if (d === 'progress_reps') lines.push('Decision: progress → add 1 rep next session.');
     else if (d === 'progress_fly') lines.push('Decision: progress → extend fly by 5m next session (reps reset to floor).');
-    else if (d === 'hold') lines.push('Decision: hold — repeat the same parameters. Need 2 consecutive strong sessions to progress.');
+    else if (d === 'hold') lines.push('Decision: hold — repeat same parameters. Progress requires this session + 1 prior both strong, with ceiling reps completed.');
     else if (d === 'regress_reps') lines.push('Decision: regress → drop to floor reps next session. Fly unchanged.');
     else if (d === 'regress_fly') lines.push('Decision: regress → reduce fly by 5m. Two consecutive degraded sessions with a force pattern detected.');
 
@@ -1601,9 +1644,13 @@ const Wizard = {
     State.wizard.stopTriggered = false;
     State.wizard.repCount = 0;
     document.getElementById('rep-cards-container').innerHTML = '';
-    document.getElementById('btn-stop').disabled = false;
-    document.getElementById('btn-stop').style.opacity = '';
+    ['btn-stop-forced', 'btn-stop-planned'].forEach(id => {
+      const b = document.getElementById(id);
+      if (b) { b.disabled = false; b.style.opacity = ''; }
+    });
     document.getElementById('stop-status').style.display = 'none';
+    document.getElementById('stop-status').textContent = 'Session stopped. Record what happened in notes.';
+    document.getElementById('btn-add-rep').style.display = '';
     this.updateRepCounter();
   },
 
@@ -1825,6 +1872,26 @@ const Wizard = {
     if (rpeValEl) rpeValEl.textContent = defaultRpe;
     // Clear feel selection
     document.querySelectorAll('#exec-feel-' + n + ' .feel-btn').forEach(b => b.classList.remove('active'));
+
+    // Refresh the prescription card to reflect the new selection
+    const r2 = State.wizard.session.readiness || {};
+    const activePicks = [1, 2, 3]
+      .map(s => {
+        const id = document.getElementById('acc-pick-' + s)?.value;
+        return id ? Plan.ACCESSORY_LIBRARY.find(e => e.id === id) : null;
+      })
+      .filter(Boolean);
+    const rxCtx2 = {
+      fatigue: ((r2.legFreshness || 7) + (r2.energy || 7)) / 2 < 5 ? 'high' : 'normal',
+      legFreshness: r2.legFreshness,
+      energy: r2.energy,
+      progressionDecision: (State.nextPlan && State.nextPlan.progressionDecision) || 'hold',
+      totalAccessories: activePicks.length
+    };
+    Wizard.fillRxAccRows(activePicks.map(function(pickEx) {
+      const rx = Plan.localPrescribe(pickEx, rxCtx2);
+      return { ex: pickEx, sets: rx.sets, reps: rx.reps, rpe: rx.rpe, rpeRange: rx.rpeRange, key_cue: rx.key_cue };
+    }));
   },
 
   addLiftRow() { this.addLiftRowWithData({ name: '', sets: 3, reps: 5, load: '', rpe: 7 }); },
@@ -1926,7 +1993,7 @@ const Wizard = {
   readStep2() {
     State.wizard.session.sprint = State.wizard.session.sprint || {};
     Object.assign(State.wizard.session.sprint, {
-      build: parseInt(document.getElementById('s-build').value) || 30,
+      build: parseInt(document.getElementById('s-build').value) || 35,
       fly: parseInt(document.getElementById('s-fly').value) || 15,
       floorReps: parseInt(document.getElementById('s-floor').value) || 3,
       ceilingReps: parseInt(document.getElementById('s-ceiling').value) || 6,
@@ -2024,7 +2091,7 @@ const Wizard = {
       </div>
       <div style="margin-top:4px;">
         <input type="text" id="${base}notes" placeholder="Rep notes (optional)" style="font-size:14px;min-height:36px;"
-          onblur="if(State.settings.aiAssist&&this.value.trim()){const ai=this.nextElementSibling;ai.style.display='block';const q=parseInt(document.getElementById('rep${n}-quality')?.value||7);const e=parseInt(document.getElementById('rep${n}-ease')?.value||7);const r=parseInt(document.getElementById('rep${n}-rhythm')?.value||7);const c=parseInt(document.getElementById('rep${n}-confidence')?.value||7);AIAssist.onRepNoteBlur(${n},this.value,{quality:q,ease:e,rhythm:r,confidence:c},ai);}">
+          onblur="if(State.settings.aiAssist&&this.value.trim()){const ai=this.nextElementSibling;ai.style.display='block';const card=this.closest('.rep-card');const idx=[...document.querySelectorAll('.rep-card')].indexOf(card)+1;const base2='rep'+idx+'-';const q=parseInt(document.getElementById(base2+'quality')?.value||7);const e=parseInt(document.getElementById(base2+'ease')?.value||7);const r=parseInt(document.getElementById(base2+'rhythm')?.value||7);const c=parseInt(document.getElementById(base2+'confidence')?.value||7);AIAssist.onRepNoteBlur(idx,this.value,{quality:q,ease:e,rhythm:r,confidence:c},ai);}">
         <div id="${base}ai-block" style="display:none;"></div>
       </div>`;
     container.appendChild(div);
@@ -2077,16 +2144,19 @@ const Wizard = {
     if (el) el.textContent = msg;
   },
 
-  triggerStop() {
+  triggerStop(type = 'forced') {
     this.readStep3();
     State.wizard.stopTriggered = true;
     State.wizard.session.sprint.stopTriggered = true;
-    const btn = document.getElementById('btn-stop');
-    btn.disabled = true;
-    btn.textContent = 'Session Stopped';
+    State.wizard.session.sprint.stopType = type;
+    ['btn-stop-forced', 'btn-stop-planned'].forEach(id => {
+      const b = document.getElementById(id);
+      if (b) b.disabled = true;
+    });
     document.getElementById('stop-status').style.display = 'block';
+    document.getElementById('stop-status').textContent = type === 'planned' ? 'Planned cap reached. Good session.' : 'Session stopped. Record what happened in notes.';
     document.getElementById('btn-add-rep').style.display = 'none';
-    if (State.settings.aiAssist) {
+    if (State.settings.aiAssist && type === 'forced') {
       const reps = State.wizard.session.sprint.reps || [];
       const lastRep = reps[reps.length - 1] || {};
       AIAssist.onStop(State.wizard.repCount, lastRep.notes || '', reps.map(r => r.quality));
@@ -2111,10 +2181,10 @@ const Wizard = {
       summary: State.wizard.session.summary
     };
 
-    session.analysis = Analyzer.analyzeSession(session, State.sessions);
-
-    // Attach any AI outputs gathered during the wizard steps
+    // Attach AI outputs BEFORE analysis so the Analyzer can read planner_impact_bias
     session.aiOutputs = State.wizard.session._aiOutputs || {};
+
+    session.analysis = Analyzer.analyzeSession(session, State.sessions);
 
     // AI session summary — awaited with 4s cap so it lands in the same save
     if (State.settings.aiAssist) {
@@ -2683,15 +2753,17 @@ const Plan = {
       reasons.fly = `Regress fly by 5m. Two consecutive degraded sessions with force pattern.`;
       reasons.reps = `Reset reps to floor after fly regression.`;
     } else if (a.progressionDecision === 'progress_reps') {
-      suggestedReps = Math.min(6, sprint.ceilingReps + 1);
+      suggestedReps = Math.min(5, sprint.ceilingReps + 1); // FIX4: hard cap at 5 for max velocity CNS load
       reasons.reps = `Progress → add 1 rep. Two consecutive strong sessions at ceiling.`;
     } else if (a.progressionDecision === 'progress_fly') {
       suggestedFly = Math.min(25, sprint.fly + 5);
       suggestedReps = sprint.floorReps;
-      reasons.fly = `Progress fly by 5m. Ceiling reps maxed at 6 for 2 sessions.`;
+      reasons.fly = `Progress fly by 5m. Ceiling reps maxed at 5 for 2 sessions.`;
       reasons.reps = `Reset reps to floor for new fly distance.`;
     } else {
-      reasons.reps = `Hold — need 2 consecutive strong sessions to progress.`;
+      reasons.reps = (session.sprint && session.sprint.stopTriggered)
+        ? `Hold — you stopped early last session. Need 2 consecutive strong sessions to progress.`
+        : `Hold — need 2 consecutive strong sessions to progress.`;
       reasons.fly = `Hold — same fly distance.`;
     }
 
@@ -2756,7 +2828,18 @@ const Plan = {
     });
 
     // Build suggested lift exercises from last session with progression applied
-    const lastExercises = JSON.parse(JSON.stringify(session.lift.exercises || []));
+    // If the current session was stopped early, use the most recent complete session's
+    // exercises as the template so we don't propagate a truncated exercise list.
+    let exerciseSourceSession = session;
+    if (session.sprint && session.sprint.stopTriggered) {
+      const prior = [...allSessions].reverse().find(
+        s => s.id !== session.id && !(s.sprint && s.sprint.stopTriggered) && (s.lift && s.lift.exercises || []).length > 0
+      );
+      if (prior) exerciseSourceSession = prior;
+    }
+    const lastExercises = JSON.parse(JSON.stringify(
+      (exerciseSourceSession.lift && exerciseSourceSession.lift.exercises) || session.lift.exercises || []
+    ));
     lastExercises.forEach(ex => {
       if (!MAIN_LIFTS.includes(ex.name)) return;
       if (liftDecision === 'decrease_sets') {
@@ -2922,6 +3005,32 @@ const Plan = {
             <input type="number" id="ov-ceiling" value="${ov.ceilingReps !== undefined ? ov.ceilingReps : p.ceilingReps}" min="1" max="8">
           </div>
         </div>
+        ${(p.exercises || []).length > 0 ? `
+        <div style="margin-top:16px;">
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;">Lift overrides</div>
+          ${(p.exercises || []).map((ex, i) => `
+          <div style="margin-bottom:12px;">
+            <div style="font-size:12px;font-weight:600;margin-bottom:4px;">${ex.name}</div>
+            <div class="plan-override" style="grid-template-columns:repeat(4,1fr);">
+              <div>
+                <label>Sets</label>
+                <input type="number" id="ov-ex-sets-${i}" value="${(ov.exercises || [])[i] !== undefined ? (ov.exercises[i].sets !== undefined ? ov.exercises[i].sets : ex.sets) : (ex.sets || 3)}" min="1" max="8">
+              </div>
+              <div>
+                <label>Reps</label>
+                <input type="number" id="ov-ex-reps-${i}" value="${(ov.exercises || [])[i] !== undefined ? (ov.exercises[i].reps !== undefined ? ov.exercises[i].reps : (ex.reps || '')) : (ex.reps || '')}" min="1" max="20" placeholder="—">
+              </div>
+              <div>
+                <label>Load</label>
+                <input type="text" id="ov-ex-load-${i}" value="${(ov.exercises || [])[i] !== undefined ? (ov.exercises[i].load !== undefined ? ov.exercises[i].load : (ex.load || '')) : (ex.load || '')}" placeholder="kg/lbs">
+              </div>
+              <div>
+                <label>RPE</label>
+                <input type="number" id="ov-ex-rpe-${i}" value="${(ov.exercises || [])[i] !== undefined ? (ov.exercises[i].rpe !== undefined ? ov.exercises[i].rpe : (ex.rpe || '')) : (ex.rpe || '')}" min="5" max="10" step="0.5" placeholder="—">
+              </div>
+            </div>
+          </div>`).join('')}
+        </div>` : ''}
         <div class="field">
           <label>Override comment</label>
           <textarea id="ov-comment" rows="2" placeholder="Why you changed it…">${ov.comment || ''}</textarea>
@@ -2932,6 +3041,7 @@ const Plan = {
 
   saveOverrides() {
     if (!State.nextPlan) return;
+    const p = State.nextPlan;
     State.nextPlan.overrides = {
       fly: parseInt(document.getElementById('ov-fly').value),
       build: parseInt(document.getElementById('ov-build').value),
@@ -2939,8 +3049,31 @@ const Plan = {
       ceilingReps: parseInt(document.getElementById('ov-ceiling').value),
       comment: document.getElementById('ov-comment').value
     };
-    // Apply overrides to top-level plan fields for Step 2 pre-fill
-    Object.assign(State.nextPlan, State.nextPlan.overrides);
+    // Collect per-exercise overrides
+    const exerciseOverrides = (p.exercises || []).map((ex, i) => {
+      const setsEl = document.getElementById('ov-ex-sets-' + i);
+      const repsEl = document.getElementById('ov-ex-reps-' + i);
+      const loadEl = document.getElementById('ov-ex-load-' + i);
+      const rpeEl  = document.getElementById('ov-ex-rpe-'  + i);
+      const sets = setsEl ? parseInt(setsEl.value) : NaN;
+      const reps = repsEl ? parseInt(repsEl.value) : NaN;
+      const load = loadEl ? loadEl.value.trim() : '';
+      const rpe  = rpeEl  ? parseFloat(rpeEl.value) : NaN;
+      return {
+        sets: isNaN(sets) ? ex.sets : sets,
+        reps: isNaN(reps) ? ex.reps : reps,
+        load: load || ex.load,
+        rpe:  isNaN(rpe)  ? ex.rpe  : rpe
+      };
+    });
+    State.nextPlan.overrides.exercises = exerciseOverrides;
+    // Apply exercise overrides to plan exercises for Log pre-fill
+    (State.nextPlan.exercises || []).forEach((ex, i) => {
+      if (exerciseOverrides[i]) Object.assign(ex, exerciseOverrides[i]);
+    });
+    // Apply sprint overrides to top-level plan fields for Step 2 pre-fill
+    const { exercises: _ex, ...sprintOverrides } = State.nextPlan.overrides;
+    Object.assign(State.nextPlan, sprintOverrides);
     Storage.save();
     this.render();
     alert('Plan saved. It will pre-fill your next Log session.');
@@ -3424,11 +3557,15 @@ const ResearchDB = {
   async load() {
     try {
       const res = await fetch('http://localhost:3001/api/research');
-      if (!res.ok) return;
-      const { data } = await res.json();
-      localStorage.setItem(this.KEY, JSON.stringify(data));
+      if (!res.ok) {
+        console.warn('[ResearchDB] Unexpected status:', res.status);
+        return;
+      }
+      const json = await res.json();
+      if (!json.ok || !json.data) return; // pipeline not run yet
+      localStorage.setItem(this.KEY, JSON.stringify(json.data));
     } catch (e) {
-      // Server not running or pipeline not run yet — use cached version if available
+      // Server not running — use cached version if available
     }
   },
 
