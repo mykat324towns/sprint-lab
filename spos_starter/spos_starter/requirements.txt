@@ -1,0 +1,4 @@
+exa-py
+firecrawl-py
+playwright
+python-dotenv
